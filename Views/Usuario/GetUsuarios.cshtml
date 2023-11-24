@@ -1,0 +1,20 @@
+@using tl2_tp10_2023_TcassasT.Models
+@model List<Usuario>
+
+<h1>Lista de usuarios</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">nombre de usuario</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach(Usuario usuario in Model) {
+      <tr>
+        <th scope="row">@usuario.Id</th>
+        <td>@usuario.NombreDeUsario</td>
+      </tr>
+    }
+  </tbody>
+</table>
