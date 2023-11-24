@@ -17,4 +17,27 @@ public class UsuarioController : Controller {
     List<Usuario> usuarios = usuarioRepository.GetUsuarios();
     return View(usuarios);
   }
+
+  [HttpGet]
+  public IActionResult CrearUsuario() {
+    return View(new Usuario());
+  }
+
+  [HttpPost]
+  public IActionResult CrearUsuario(Usuario usuario) {
+    usuarioRepository.CrearUsuario(usuario);
+    return RedirectToAction("GetUsuarios");
+  }
+
+  [HttpGet]
+  public IActionResult ModificarUsuario(int id) {
+    Usuario usuario = usuarioRepository.GetUsuario(id);
+    return View(usuario);
+  }
+
+  [HttpPost]
+  public IActionResult ModificarUsuario(int id, Usuario usuario) {
+    usuarioRepository.ModificarUsuario(id, usuario);
+    return RedirectToAction("GetUsuarios");
+  }
 }

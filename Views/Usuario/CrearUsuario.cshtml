@@ -1,0 +1,10 @@
+@using tl2_tp10_2023_TcassasT.Models
+@model Usuario
+
+<form asp-controller="Usuario" asp-action="CrearUsuario" method="post">
+  <div class="mb-3">
+    <label class="form-label">Nombre de usuario</label>
+    <input type="text" class="form-control" asp-for="NombreDeUsario">
+  </div>
+  <button type="submit" class="btn btn-primary">Crear</button>
+</form>

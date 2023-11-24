@@ -12,7 +12,9 @@
   <tbody>
     @foreach(Usuario usuario in Model) {
       <tr>
-        <th scope="row">@usuario.Id</th>
+        <th scope="row">
+          <a asp-action="ModificarUsuario" asp-route-id=@usuario.Id>@usuario.Id</a>
+        </th>
         <td>@usuario.NombreDeUsario</td>
       </tr>
     }
