@@ -1,0 +1,17 @@
+@using tl2_tp10_2023_TcassasT.Models
+@model Tablero
+
+<form asp-controller="Tablero" asp-action="CrearTablero" method="post">
+  <div class="mb-3">
+    <label class="form-label">Nombre</label>
+    <input type="text" class="form-control" asp-for="Nombre">
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Descripcion</label>
+    <textarea class="form-control" asp-for="Descripcion"></textarea>
+  </div>
+  
+  <input type="text" class="form-control" asp-for="IdUsuarioPropietario" value="1" hidden>
+
+  <button type="submit" class="btn btn-primary">Crear</button>
+</form>
