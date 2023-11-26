@@ -5,17 +5,22 @@
 <table class="table">
   <thead>
     <tr>
-      <th scope="col">id</th>
-      <th scope="col">nombre de usuario</th>
+      <th scope="col">Id</th>
+      <th scope="col">Nombre de usuario</th>
+      <th scope="col" colspan="2">Acciones</th>
     </tr>
   </thead>
   <tbody>
     @foreach(Usuario usuario in Model) {
       <tr>
-        <th scope="row">
-          <a asp-action="ModificarUsuario" asp-route-id=@usuario.Id>@usuario.Id</a>
-        </th>
+        <th scope="row">@usuario.Id</th>
         <td>@usuario.NombreDeUsario</td>
+        <td>
+          <a asp-action="ModificarUsuario" asp-route-id=@usuario.Id>Editar</a>
+        </td>
+        <td>
+          <a asp-action="EliminarUsuario" asp-route-id=@usuario.Id>Eliminar</a>
+        </td>
       </tr>
     }
   </tbody>

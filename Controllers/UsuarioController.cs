@@ -40,4 +40,10 @@ public class UsuarioController : Controller {
     usuarioRepository.ModificarUsuario(id, usuario);
     return RedirectToAction("GetUsuarios");
   }
+
+  [HttpPost]
+  public ActionResult EliminarUsuario(int id) {
+    usuarioRepository.EliminarUsuario(id);
+    return RedirectToAction("GetUsuarios");
+  }
 }
