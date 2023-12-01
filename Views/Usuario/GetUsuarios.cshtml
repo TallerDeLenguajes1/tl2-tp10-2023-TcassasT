@@ -1,13 +1,13 @@
 @using tl2_tp10_2023_TcassasT.Models
 @model List<Usuario>
 
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <h1>Lista de usuarios</h1>
+  <button type="button" class="btn btn-primary">
+    <a asp-controller="Usuario" asp-action="CrearUsuario" style="text-decoration: none; color: white;">Crear usuario</a>
+  </button>
+</div>
 @if (@Model.Count > 0) {
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <h1>Lista de usuarios</h1>
-    <button type="button" class="btn btn-primary">
-      <a asp-controller="Usuario" asp-action="CrearUsuario" style="text-decoration: none; color: white;">Crear usuario</a>
-    </button>
-  </div>
   <table class="table">
     <thead>
       <tr>
