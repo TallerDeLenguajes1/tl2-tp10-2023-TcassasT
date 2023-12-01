@@ -42,7 +42,6 @@ public class TableroController: Controller {
     return RedirectToAction("GetTableros");
   }
 
-  [HttpDelete]
   public IActionResult EliminarTablero(int id) {
     tableroReposiroty.EliminarTablero(id);
     return RedirectToAction("GetTableros");

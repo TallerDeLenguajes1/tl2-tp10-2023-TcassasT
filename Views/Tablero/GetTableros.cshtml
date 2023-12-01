@@ -21,7 +21,7 @@
           <a asp-action="ModificarTablero" asp-route-id=@tablero.Id>Editar</a>
         </td>
         <td>
-          <a asp-action="EliminarTablero" asp-route-id=@tablero.Id>Eliminar</a>
+          <a asp-controller="Tablero" asp-action="EliminarTablero" asp-route-idProducto="@tablero.Id" asp-route-id=@tablero.Id>Eliminar</a>
         </td>
       </tr>
     }

@@ -19,7 +19,7 @@
           <a asp-action="ModificarUsuario" asp-route-id=@usuario.Id>Editar</a>
         </td>
         <td>
-          <a asp-action="EliminarUsuario" asp-route-id=@usuario.Id>Eliminar</a>
+            <a asp-controller="Usuario" asp-action="EliminarUsuario" asp-route-id=@usuario.Id>Eliminar</a>
         </td>
       </tr>
     }
