@@ -33,7 +33,8 @@ public class TareaRepository: ITareaRepository {
 
   public Tarea GetTarea(int idTarea) {
     String query = String.Format(
-      "SELECT * FROM tareas WHERE id = {0};"
+      "SELECT * FROM tareas WHERE id = {0};",
+      idTarea
     );
     return EjecutaQueryReaderTareas(query)[0];
   }

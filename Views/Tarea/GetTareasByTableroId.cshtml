@@ -1,0 +1,37 @@
+@using tl2_tp10_2023_TcassasT.Models
+@model List<Tarea>
+
+<h1>Lista de tareas</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Nombre</th>
+      <th scope="col">Descripcion</th>
+      <th scope="col">Color</th>
+      <th scope="col">Estado</th>
+      <th scope="col">Id usuario asignado</th>
+      <th scope="col">Id tablero perteneciente</th>
+      <th scope="col" colspan="2">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach(Tarea tarea in Model) {
+      <tr>
+        <th scope="row">@tarea.Id</th>
+        <td>@tarea.Nombre</td>
+        <td>@tarea.Descripcion</td>
+        <td>@tarea.Color</td>
+        <td>@tarea.Estado</td>
+        <td>@tarea.IdUsuarioAsignado</td>
+        <td>@tarea.IdTablero</td>
+        <td>
+          <a asp-controller="Tarea" asp-action="ModificarTarea" asp-route-id=@tarea.Id>Editar</a>
+        </td>
+        <td>
+          <a asp-controller="Tarea" asp-action="EliminarTarea" asp-route-id=@tarea.Id>Eliminar</a>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
