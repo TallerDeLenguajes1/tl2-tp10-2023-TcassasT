@@ -1,29 +1,42 @@
 @using tl2_tp10_2023_TcassasT.Models
 @model List<Tablero>
 
-<h1>Lista de tableros</h1>
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Nombre de tablero</th>
-      <th scope="col">Descripcion</th>
-      <th scope="col" colspan="2">Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach(Tablero tablero in Model) {
+@if (@Model.Count > 0) {
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>Lista de tableros</h1>
+    <button type="button" class="btn btn-primary">
+      <a asp-controller="Tablero" asp-action="CrearTablero" style="text-decoration: none; color: white;">Crear tablero</a>
+    </button>
+  </div>
+  <table class="table">
+    <thead>
       <tr>
-        <th scope="row">@tablero.Id</th>
-        <td>@tablero.Nombre</td>
-        <td>@tablero.Descripcion</td>
-        <td>
-          <a asp-action="ModificarTablero" asp-route-id=@tablero.Id>Editar</a>
-        </td>
-        <td>
-          <a asp-controller="Tablero" asp-action="EliminarTablero" asp-route-idProducto="@tablero.Id" asp-route-id=@tablero.Id>Eliminar</a>
-        </td>
+        <th scope="col">Id</th>
+        <th scope="col">Nombre de tablero</th>
+        <th scope="col">Descripcion</th>
+        <th scope="col" colspan="2">Acciones</th>
+        <th scope="col">Tareas</th>
       </tr>
-    }
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      @foreach(Tablero tablero in Model) {
+        <tr>
+          <th scope="row">@tablero.Id</th>
+          <td>@tablero.Nombre</td>
+          <td>@tablero.Descripcion</td>
+          <td>
+            <a asp-action="ModificarTablero" asp-route-id=@tablero.Id>Editar</a>
+          </td>
+          <td>
+            <a asp-controller="Tablero" asp-action="EliminarTablero" asp-route-id=@tablero.Id>Eliminar</a>
+          </td>
+          <td>
+            <a asp-controller="Tarea" asp-action="GetTareasByTableroId" asp-route-id=@tablero.Id>Ver tareas</a>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+} else {
+  <p>No se encontraron tableros creados</p>
+}
