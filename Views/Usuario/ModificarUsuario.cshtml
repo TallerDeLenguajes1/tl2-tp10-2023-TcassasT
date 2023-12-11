@@ -6,5 +6,13 @@
     <label class="form-label">Nombre de usuario</label>
     <input type="text" class="form-control" asp-for="NombreDeUsario" value=@Model.NombreDeUsario>
   </div>
+  <div class="mb-3">
+    <label class="form-label">Rol</label>
+    <select class="form-select" asp-for="Rol">
+      <option>Selecione un rol</option>
+      <option selected=@(Model.Rol == RolUsuario.ADMINISTRADOR) value="0">Administrador</option>
+      <option selected=@(Model.Rol == RolUsuario.OPERADOR) value="1">Operador</option>
+    </select>
+  </div>
   <button type="submit" class="btn btn-primary">Crear</button>
 </form>

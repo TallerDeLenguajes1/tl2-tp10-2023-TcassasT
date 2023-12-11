@@ -20,10 +20,22 @@ public class UsuarioRepository: IUsuarioRepository {
 
   public void CrearUsuario(Usuario usuario) {
     String query = String.Format(
-      "INSERT INTO usuarios (nombreDeUsuario) VALUES ('{0}');",
-      usuario.NombreDeUsario
+      "INSERT INTO usuarios (nombreDeUsuario, rol, contrasenia) VALUES ('{0}', {1}, '{2}');",
+      usuario.NombreDeUsario,
+      (int) usuario.Rol,
+      EncriptaContrasenia(usuario.Contrasenia)
     );
     EjecutaNonQueryUsuarios(query);
+  }
+
+  private String EncriptaContrasenia(String? contrasenia) {
+    if (string.IsNullOrEmpty(contrasenia)) {
+      throw new Exception("Contraseña no puede ser nula");
+    }
+
+    byte[] bytesContrasenia = new byte[contrasenia.Length];
+    bytesContrasenia = System.Text.Encoding.UTF8.GetBytes(contrasenia);
+    return Convert.ToBase64String(bytesContrasenia);
   }
 
   public void ModificarUsuario(int id, Usuario usuario) {
@@ -57,6 +69,7 @@ public class UsuarioRepository: IUsuarioRepository {
           Usuario usuariosItem = new Usuario();
           usuariosItem.Id = Convert.ToInt32(reader[0]);
           usuariosItem.NombreDeUsario = reader[1].ToString();
+          usuariosItem.Rol = (RolUsuario) Convert.ToInt32(reader[2]);
 
           usuarios.Add(usuariosItem);
         }

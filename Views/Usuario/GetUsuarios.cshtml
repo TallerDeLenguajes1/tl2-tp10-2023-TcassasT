@@ -13,6 +13,7 @@
       <tr>
         <th scope="col">Id</th>
         <th scope="col">Nombre de usuario</th>
+        <th scope="col">Rol</th>
         <th scope="col" colspan="2">Acciones</th>
       </tr>
     </thead>
@@ -21,6 +22,7 @@
         <tr>
           <th scope="row">@usuario.Id</th>
           <td>@usuario.NombreDeUsario</td>
+          <td>@usuario.Rol</td>
           <td>
             <a asp-action="ModificarUsuario" asp-route-id=@usuario.Id>Editar</a>
           </td>
