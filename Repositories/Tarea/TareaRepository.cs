@@ -7,28 +7,18 @@ namespace tl2_tp10_2023_TcassasT.Models;
 
 public class TareaRepository: ITareaRepository {
   public void CrearTareaEnTablero(Tarea tarea) {
-    String query = String.Format(
-      "INSERT INTO tareas (nombre, descripcion, color, estado, idUsuarioAsignado, idTablero) VALUES ('{0}', '{1}', '{2}', {3}, {4}, {5});",
-      tarea.Nombre,
-      tarea.Descripcion,
-      tarea.Color,
-      (int) tarea.Estado,
-      tarea.IdUsuarioAsignado,
-      tarea.IdTablero
+    EjecutaNonQueryTareas(
+      @"INSERT INTO tareas (nombre, descripcion, color, estado, idUsuarioAsignado, idTablero) VALUES (@nombre, @descripcion, @color, @estado, @idUsuarioAsignado, @idTablero)",
+      tarea
     );
-    EjecutaNonQueryTareas(query);
   }
 
   public void ModificarTarea(int idTarea, Tarea tarea) {
-    String query = String.Format(
-      "UPDATE tareas SET nombre = '{0}' descripcion = '{1}' color = '{2}' estado = {3} idUsuarioAsignado = {4} WHERE id = {5};",
-      tarea.Nombre,
-      tarea.Descripcion,
-      (int) tarea.Estado,
-      tarea.IdUsuarioAsignado,
-      idTarea
+    tarea.Id = idTarea;
+    EjecutaNonQueryTareas(
+      @"UPDATE tareas SET nombre = @nombre descripcion = @descripcion color = @color estado = @estado idUsuarioAsignado = @idUsuarioAsignado WHERE id = @id;",
+      tarea
     );
-    EjecutaNonQueryTareas(query);
   }
 
   public Tarea GetTarea(int idTarea) {
@@ -64,20 +54,18 @@ public class TareaRepository: ITareaRepository {
   }
 
   public void EliminarTarea(int idTarea) {
-    String query = String.Format(
-      "DELETE FROM tareas WHERE id = {0};",
-      idTarea
-    );
-    EjecutaNonQueryTareas(query);
+    Tarea tarea = new Tarea {
+      Id = idTarea
+    };
+    EjecutaNonQueryTareas("DELETE FROM tareas WHERE id = @id;", tarea);
   }
 
   public void AsignarTareaAUsuario(int idUsuario, int idTarea) {
-    String query = String.Format(
-      "UPDATE tareas SET idUsuarioAsignado = {0} WHERE id = {1};",
-      idUsuario,
-      idTarea
-    );
-    EjecutaNonQueryTareas(query);
+    Tarea tarea = new Tarea {
+      Id = idTarea,
+      IdUsuarioAsignado = idUsuario
+    };
+    EjecutaNonQueryTareas("UPDATE tareas SET idUsuarioAsignado = @idUsuarioAsignado WHERE id = @id;", tarea);
   }
 
   private List<Tarea> EjecutaQueryReaderTareas(String query) {
@@ -86,7 +74,7 @@ public class TareaRepository: ITareaRepository {
     string connectionString = "Data Source=DB/kanban.db;";
     using (SqliteConnection connection = new SqliteConnection(connectionString)) {
       connection.Open();
-      
+
       SqliteCommand command = new SqliteCommand(query, connection);
 
       using(var reader = command.ExecuteReader()) {
@@ -97,7 +85,7 @@ public class TareaRepository: ITareaRepository {
           tarea.Descripcion = reader[2].ToString();
           tarea.Color = reader[3].ToString();
           tarea.Estado = (EstadoTarea) Convert.ToInt32(reader[4]);
-          tarea.IdUsuarioAsignado = Convert.ToInt32(reader[5]);
+          tarea.IdUsuarioAsignado = reader.IsDBNull(5) ? null : Convert.ToInt32(reader[5]);
           tarea.IdTablero = Convert.ToInt32(reader[6]);
 
           tareas.Add(tarea);
@@ -110,11 +98,21 @@ public class TareaRepository: ITareaRepository {
     return tareas;
   }
 
-  private void EjecutaNonQueryTareas(String query) {
+  private void EjecutaNonQueryTareas(String query, Tarea nuevaTarea) {
     string connectionString = "Data Source=DB/kanban.db;";
     using (SqliteConnection connection = new SqliteConnection(connectionString)) {
       connection.Open();
+
       SqliteCommand command = new SqliteCommand(query, connection);
+
+      command.Parameters.Add(new SqliteParameter("@id", nuevaTarea.Id));
+      command.Parameters.Add(new SqliteParameter("@nombre", nuevaTarea.Nombre));
+      command.Parameters.Add(new SqliteParameter("@descripcion", nuevaTarea.Descripcion));
+      command.Parameters.Add(new SqliteParameter("@color", nuevaTarea.Color));
+      command.Parameters.Add(new SqliteParameter("@estado", (int) nuevaTarea.Estado));
+      command.Parameters.Add(new SqliteParameter("@idUsuarioAsignado", nuevaTarea.IdUsuarioAsignado == null ? (object) DBNull.Value : nuevaTarea.IdUsuarioAsignado));
+      command.Parameters.Add(new SqliteParameter("@idTablero", nuevaTarea.IdTablero));
+
       command.ExecuteNonQuery();
       connection.Close();
     }
