@@ -41,8 +41,21 @@ public class UsuarioController : Controller {
     return RedirectToAction("GetUsuarios");
   }
 
-  public ActionResult EliminarUsuario(int id) {
+  public IActionResult EliminarUsuario(int id) {
     usuarioRepository.EliminarUsuario(id);
     return RedirectToAction("GetUsuarios");
+  }
+
+  [HttpGet]
+  public IActionResult Login() {
+    return View(new Usuario());
+  }
+
+  [HttpPost]
+  public IActionResult Login(Usuario usuario) {
+    Usuario usuarioLogueado = usuarioRepository.Login(usuario);
+    HttpContext.Session.SetString("Usuario", usuarioLogueado.NombreDeUsario);
+    HttpContext.Session.SetString("Rol", Convert.ToString((int) usuarioLogueado.Rol));
+    return RedirectToAction("Index");
   }
 }

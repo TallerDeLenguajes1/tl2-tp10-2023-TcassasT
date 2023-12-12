@@ -1,4 +1,5 @@
 using System.Data.SqlClient;
+using System.Security.Cryptography;
 using tl2_tp10_2023_TcassasT.Models;
 using tl2_tp10_2023_TcassasT.Interfaces;
 using Microsoft.Data.Sqlite;
@@ -6,6 +7,8 @@ using Microsoft.Data.Sqlite;
 namespace tl2_tp10_2023_TcassasT.Models;
 
 public class UsuarioRepository: IUsuarioRepository {
+  private static readonly byte[] salt = System.Text.Encoding.UTF8.GetBytes("J7f9rPm2qL1s5oKv");
+
   public List<Usuario> GetUsuarios() {
     return EjecutaQueryReaderUsuarios("SELECT * FROM usuarios;");
   }
@@ -32,10 +35,14 @@ public class UsuarioRepository: IUsuarioRepository {
     if (string.IsNullOrEmpty(contrasenia)) {
       throw new Exception("Contraseña no puede ser nula");
     }
-
-    byte[] bytesContrasenia = new byte[contrasenia.Length];
-    bytesContrasenia = System.Text.Encoding.UTF8.GetBytes(contrasenia);
-    return Convert.ToBase64String(bytesContrasenia);
+  
+    using (var pbkdf2 = new Rfc2898DeriveBytes(contrasenia, salt, 10000, HashAlgorithmName.SHA256)) {      
+        byte[] hash = pbkdf2.GetBytes(32);
+        byte[] hashBytes = new byte[48];
+        Array.Copy(salt, 0, hashBytes, 0, 16);
+        Array.Copy(hash, 0, hashBytes, 16, 32);
+        return Convert.ToBase64String(hashBytes);
+    }
   }
 
   public void ModificarUsuario(int id, Usuario usuario) {
@@ -55,6 +62,24 @@ public class UsuarioRepository: IUsuarioRepository {
     EjecutaNonQueryUsuarios(query);
   }
 
+  public Usuario Login(Usuario login) {
+    String query = String.Format(
+      @"SELECT * FROM usuarios WHERE nombreDeUsuario = '{0}'",
+      login.NombreDeUsario
+    );
+    Usuario usuario = EjecutaQueryReaderUsuarios(query)[0];
+
+    if (usuario == null) {
+      throw new Exception("Usuario no encontrado");
+    }
+
+    if (EncriptaContrasenia(login.Contrasenia).Equals(usuario.Contrasenia)) {
+      return usuario;
+    } else {
+      throw new Exception("Contraseña incorrecta");
+    }
+  }
+
   private List<Usuario> EjecutaQueryReaderUsuarios(String query) {
     List<Usuario> usuarios = new List<Usuario>();
 
@@ -70,6 +95,7 @@ public class UsuarioRepository: IUsuarioRepository {
           usuariosItem.Id = Convert.ToInt32(reader[0]);
           usuariosItem.NombreDeUsario = reader[1].ToString();
           usuariosItem.Rol = (RolUsuario) Convert.ToInt32(reader[2]);
+          usuariosItem.Contrasenia = reader[3].ToString();
 
           usuarios.Add(usuariosItem);
         }

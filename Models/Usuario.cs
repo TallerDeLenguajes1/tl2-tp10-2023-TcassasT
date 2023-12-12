@@ -1,8 +1,8 @@
 namespace tl2_tp10_2023_TcassasT.Models;
 
 public enum RolUsuario {
-  OPERADOR,
   ADMINISTRADOR,
+  OPERADOR,
 }
 
 public class Usuario {

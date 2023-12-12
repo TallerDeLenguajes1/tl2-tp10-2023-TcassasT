@@ -8,4 +8,5 @@ public interface IUsuarioRepository {
   List<Usuario> GetUsuarios();
   Usuario GetUsuario(int id);
   void EliminarUsuario(int id);
+  Usuario Login(Usuario usuario);
 }
