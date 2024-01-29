@@ -54,8 +54,8 @@ public class UsuarioController : Controller {
   [HttpPost]
   public IActionResult Login(Usuario usuario) {
     Usuario usuarioLogueado = usuarioRepository.Login(usuario);
-    HttpContext.Session.SetString("Usuario", usuarioLogueado.NombreDeUsario);
+    HttpContext.Session.SetString("NombreDeUsuario", usuarioLogueado.NombreDeUsario);
     HttpContext.Session.SetString("Rol", Convert.ToString((int) usuarioLogueado.Rol));
-    return RedirectToAction("Index");
+    return RedirectToAction("Index", "Home");
   }
 }
