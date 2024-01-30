@@ -1,3 +1,7 @@
+using tl2_tp10_2023_TcassasT.Interfaces;
+using tl2_tp10_2023_TcassasT.Middlewares;
+using tl2_tp10_2023_TcassasT.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,6 +13,9 @@ builder.Services.AddSession(options => {
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+builder.Services.AddScoped<ITableroReposiroty, TableroRepository>();
+builder.Services.AddScoped<ITareaRepository, TareaRepository>();
 
 var app = builder.Build();
 
@@ -26,6 +33,9 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
+
+// Middleware para verificar datos en session, importante que esté luego del useSession
+app.UseMiddleware<VerificarDatosEnSesion>();
 
 app.MapControllerRoute(
     name: "default",

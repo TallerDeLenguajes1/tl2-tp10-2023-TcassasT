@@ -31,7 +31,7 @@
             <a asp-controller="Tablero" asp-action="EliminarTablero" asp-route-id=@tablero.Id>Eliminar</a>
           </td>
           <td>
-            <a asp-controller="Tarea" asp-action="GetTareasByTableroId" asp-route-id=@tablero.Id>Ver tareas</a>
+            <a asp-controller="Tablero" asp-action="GetTareasByTableroId" asp-route-idTablero=@tablero.Id>Ver tareas</a>
           </td>
         </tr>
       }

@@ -1,49 +1,93 @@
 using Microsoft.AspNetCore.Mvc;
 using tl2_tp10_2023_TcassasT.Interfaces;
 using tl2_tp10_2023_TcassasT.Models;
+using tl2_tp10_2023_TcassasT.ViewModels;
 
 namespace tl2_tp10_2023_TcassasT.Controllers;
 
+[Route("tableros")]
 public class TableroController: Controller {
   private readonly ILogger<TableroController> _logger;
-  private readonly ITableroReposiroty tableroReposiroty;
-  public TableroController(ILogger<TableroController> logger) {
+  private readonly ITableroReposiroty _tableroReposiroty;
+  private readonly ITareaRepository _tareaRepository;
+  public TableroController(ILogger<TableroController> logger, ITableroReposiroty tableroRepository, ITareaRepository tareaRepository) {
       _logger = logger;
-      tableroReposiroty = new TableroRepository();
+      _tableroReposiroty = tableroRepository;
+      _tareaRepository = tareaRepository;
   }
 
-  [HttpGet]
+  [HttpGet("")]
   public IActionResult GetTableros() {
     int userId = 1;
-    List<Tablero> tableros = tableroReposiroty.GetTablerosByUserId(userId);
+    List<Tablero> tableros = _tableroReposiroty.GetTablerosByUserId(userId);
     return View(tableros);
   }
 
-  [HttpGet]
+  [HttpGet("nuevo")]
   public IActionResult CrearTablero() {
     return View(new Tablero());
   }
 
-  [HttpPost]
+  [HttpPost("nuevo")]
   public IActionResult CrearTablero(Tablero tablero) {
-    tableroReposiroty.CrearTablero(tablero);
+    _tableroReposiroty.CrearTablero(tablero);
     return RedirectToAction("GetTableros");
   }
 
-  [HttpGet]
+  [HttpGet("{id}/modificar")]
   public IActionResult ModificarTablero(int id) {
-    Tablero tablero = tableroReposiroty.GetTablero(id);
+    Tablero tablero = _tableroReposiroty.GetTablero(id);
     return View(tablero);
   }
 
-  [HttpPost]
+  [HttpPost("{id}/modificar")]
   public IActionResult ModificarTablero(int id, Tablero tablero) {
-    tableroReposiroty.ModificarTablero(id, tablero);
+    _tableroReposiroty.ModificarTablero(id, tablero);
     return RedirectToAction("GetTableros");
   }
 
+  [HttpGet("{id}/eliminar")]
   public IActionResult EliminarTablero(int id) {
-    tableroReposiroty.EliminarTablero(id);
+    _tableroReposiroty.EliminarTablero(id);
     return RedirectToAction("GetTableros");
+  }
+
+  // Tareas
+  [HttpGet("{idTablero}/tareas")]
+  public ActionResult GetTareasByTableroId(int idTablero) {
+    GetTareasByTableroIdViewModel vm = new GetTareasByTableroIdViewModel();
+    vm.Tareas = _tareaRepository.GetTareasByTableroId(idTablero);
+    vm.TableroId = idTablero;
+    return View(vm);
+  }
+
+  [HttpGet("{idTablero}/tareas/nueva")]
+  public ActionResult CrearTarea(int idTablero) {
+    return View(new Tarea() { IdTablero = idTablero });
+  }
+
+  [HttpPost("{idTablero}/tareas/nueva")]
+  public IActionResult CrearTarea(int idTablero, Tarea tarea) {
+    _tareaRepository.CrearTareaEnTablero(tarea);
+    return RedirectToAction("GetTareasByTableroId", new { idTablero });
+  }
+
+  [HttpGet("{idTablero}/tareas/{idTarea}/modificar")]
+  public IActionResult ModificarTarea(int idTablero, int idTarea) {
+    Tarea tareaAModificar = _tareaRepository.GetTarea(idTarea);
+    return View(tareaAModificar);
+  }
+
+  [HttpPost("{idTablero}/tareas/{idTarea}/modificar")]
+  public IActionResult ModificarTarea(int idTablero, int idTarea, Tarea tarea) {
+    _tareaRepository.ModificarTarea(idTarea, tarea);
+    return RedirectToAction("GetTareasByTableroId", new { idTablero });
+  }
+
+  [HttpGet("{idTablero}/tareas/{idTarea}/eliminar")]
+  public IActionResult EliminarTarea(int idTablero, int idTarea) {
+    Tarea tarea = _tareaRepository.GetTarea(idTarea);
+    _tareaRepository.EliminarTarea(idTarea);
+    return RedirectToAction("GetTareasByTableroId", new { idTablero });
   }
 }

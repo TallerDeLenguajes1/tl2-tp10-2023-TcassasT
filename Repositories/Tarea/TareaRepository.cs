@@ -16,7 +16,7 @@ public class TareaRepository: ITareaRepository {
   public void ModificarTarea(int idTarea, Tarea tarea) {
     tarea.Id = idTarea;
     EjecutaNonQueryTareas(
-      @"UPDATE tareas SET nombre = @nombre descripcion = @descripcion color = @color estado = @estado idUsuarioAsignado = @idUsuarioAsignado WHERE id = @id;",
+      @"UPDATE tareas SET nombre = @nombre, descripcion = @descripcion, color = @color, estado = @estado, idUsuarioAsignado = @idUsuarioAsignado WHERE id = @id;",
       tarea
     );
   }
@@ -101,20 +101,27 @@ public class TareaRepository: ITareaRepository {
   private void EjecutaNonQueryTareas(String query, Tarea nuevaTarea) {
     string connectionString = "Data Source=DB/kanban.db;";
     using (SqliteConnection connection = new SqliteConnection(connectionString)) {
-      connection.Open();
+      try {
+        connection.Open();
 
-      SqliteCommand command = new SqliteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-      command.Parameters.Add(new SqliteParameter("@id", nuevaTarea.Id));
-      command.Parameters.Add(new SqliteParameter("@nombre", nuevaTarea.Nombre));
-      command.Parameters.Add(new SqliteParameter("@descripcion", nuevaTarea.Descripcion));
-      command.Parameters.Add(new SqliteParameter("@color", nuevaTarea.Color));
-      command.Parameters.Add(new SqliteParameter("@estado", (int) nuevaTarea.Estado));
-      command.Parameters.Add(new SqliteParameter("@idUsuarioAsignado", nuevaTarea.IdUsuarioAsignado == null ? (object) DBNull.Value : nuevaTarea.IdUsuarioAsignado));
-      command.Parameters.Add(new SqliteParameter("@idTablero", nuevaTarea.IdTablero));
+        command.Parameters.Add(new SqliteParameter("@id", nuevaTarea.Id));
+        command.Parameters.Add(new SqliteParameter("@nombre", nuevaTarea.Nombre));
+        command.Parameters.Add(new SqliteParameter("@descripcion", nuevaTarea.Descripcion));
+        command.Parameters.Add(new SqliteParameter("@color", nuevaTarea.Color));
+        command.Parameters.Add(new SqliteParameter("@estado", (int) nuevaTarea.Estado));
+        command.Parameters.Add(new SqliteParameter("@idUsuarioAsignado", nuevaTarea.IdUsuarioAsignado == null ? (object) DBNull.Value : nuevaTarea.IdUsuarioAsignado));
+        command.Parameters.Add(new SqliteParameter("@idTablero", nuevaTarea.IdTablero));
 
-      command.ExecuteNonQuery();
-      connection.Close();
+        command.ToString();
+
+        command.ExecuteNonQuery();
+        connection.Close();
+      } catch (System.Exception e) {
+       
+        Console.WriteLine(e.Message);
+      }
     }
   }
 }

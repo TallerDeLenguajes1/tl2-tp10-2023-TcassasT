@@ -54,6 +54,10 @@ public class UsuarioController : Controller {
   [HttpPost]
   public IActionResult Login(Usuario usuario) {
     Usuario usuarioLogueado = usuarioRepository.Login(usuario);
+    if (usuarioLogueado.NombreDeUsario == null) {
+      throw new Exception("No se puede loguear usuario");
+    }
+
     HttpContext.Session.SetString("NombreDeUsuario", usuarioLogueado.NombreDeUsario);
     HttpContext.Session.SetString("Rol", Convert.ToString((int) usuarioLogueado.Rol));
     return RedirectToAction("Index", "Home");
