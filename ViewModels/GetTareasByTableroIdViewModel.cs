@@ -4,11 +4,12 @@ namespace tl2_tp10_2023_TcassasT.ViewModels;
 
 public class GetTareasByTableroIdViewModel {
   public int TableroId { get; set; }
-  public List<Tarea> Tareas { get; set; } = new List<Tarea>();
+  public int CantidadDeTareas { get; set; }
+  public Dictionary<EstadoTarea, List<Tarea>> TareasPorEstado { get; set; }
 
-  public GetTareasByTableroIdViewModel() {}
-  public GetTareasByTableroIdViewModel(int tableroId, List<Tarea> tareas) {
-    this.TableroId = tableroId;
-    this.Tareas = tareas;
+  public GetTareasByTableroIdViewModel() {
+    TareasPorEstado = Enum.GetValues(typeof(EstadoTarea))
+      .Cast<EstadoTarea>()
+      .ToDictionary(tipo => tipo, tipo => new List<Tarea>());
   }
 }
