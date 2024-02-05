@@ -9,14 +9,50 @@
   </button>
 </div>
 <div class="container">
-  <div class="row justify-content-md-start">
+  <div class="row g-2 justify-content-md-start">
     @foreach (var estado in Enum.GetValues(typeof(EstadoTarea)).Cast<EstadoTarea>()) {
       <div class="col">
         <h3>@estado</h3>
         @foreach (var tarea in Model.TareasPorEstado[estado]) {
-          <p>@tarea.Nombre</p>
+          <div class="card mt-2" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">@tarea.Nombre</h5>
+              <h6 class="card-subtitle mb-2 text-muted">Ultima interacción: 02-02-2024</h6>
+              <p class="card-text">@tarea.Descripcion</p>
+              <!-- Button trigger modal -->
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#modal-detalle-tarea"
+                data-bs-tareaNombre="@tarea.Nombre"
+                data-bs-tareaDescripcion="@tarea.Descripcion"
+              >
+                Ver detalle
+              </button>
+            </div>
+          </div>
         }
       </div>
     }
   </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="modal-detalle-tarea" tabindex="-1" aria-labelledby="detalle-tarea-nombre" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="detalle-tarea-nombre">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  <script src="~/js/getTareasByTableroId.js"></script>
+}
