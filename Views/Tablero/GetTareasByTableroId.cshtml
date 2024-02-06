@@ -30,6 +30,16 @@
               >
                 Ver detalle
               </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#modal-cambiar-estado-tarea"
+                data-bs-tareaNombre="@tarea.Nombre"
+                data-bs-tareaEstado="@tarea.Estado"
+              >
+                Cambiar estado
+              </button>
             </div>
           </div>
         }
@@ -38,7 +48,7 @@
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal detalle de tarea -->
 <div class="modal fade" id="modal-detalle-tarea" tabindex="-1" aria-labelledby="detalle-tarea-nombre" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
@@ -46,8 +56,31 @@
         <h1 class="modal-title fs-5" id="detalle-tarea-nombre">Modal title</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" id="detalle-tarea-descripcion">
         <p>Modal body</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal cambiar estado de tarea -->
+<div class="modal fade" id="modal-cambiar-estado-tarea" tabindex="-1" aria-labelledby="estado-tarea" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="estado-tarea">Cambiar estado</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Estas por cambiar el estado de la tarea: <strong id="cambiar-estado-nombre"></strong></p>
+        <select class="form-select">
+          @foreach (var estado in Enum.GetValues(typeof(EstadoTarea)).Cast<EstadoTarea>()) {
+            <option value="@estado">@estado</option>
+          }
+        </select>
+        <div class="modal-footer">
+          <button class="btn btn-primary">Actualizar</button>
+        </div>
       </div>
     </div>
   </div>
