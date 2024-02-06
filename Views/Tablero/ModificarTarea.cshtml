@@ -16,7 +16,11 @@
   </div>
   <div class="mb-3">
     <label class="form-label">Estado</label>
-    <input type="text" class="form-control" asp-for="Estado" value=@Model.Estado>
+    <select class="form-select" asp-for="Estado">
+      @foreach (var estado in Enum.GetValues(typeof(EstadoTarea))) {
+        <option value="@estado" selected=@Model.Estado.CompareTo(estado).Equals(0)>@estado</option>
+      }
+    </select>
   </div>
   <div class="mb-3">
     <label class="form-label">Usuario</label>

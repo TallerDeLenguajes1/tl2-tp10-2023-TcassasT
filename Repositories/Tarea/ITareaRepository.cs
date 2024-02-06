@@ -5,6 +5,7 @@ namespace tl2_tp10_2023_TcassasT.Interfaces;
 public interface ITareaRepository {
   void CrearTareaEnTablero(Tarea tarea);
   void ModificarTarea(int idTarea, Tarea tarea);
+  void ModificarEstado(int idTarea, EstadoTarea estado);
   Tarea GetTarea(int idTarea);
   List<Tarea> GetTareasByUsuarioId(int idUsuario);
   List<Tarea> GetTareasByTableroId(int idTablero);

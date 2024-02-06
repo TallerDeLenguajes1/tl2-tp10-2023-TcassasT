@@ -21,6 +21,14 @@ public class TareaRepository: ITareaRepository {
     );
   }
 
+  public void ModificarEstado(int idTarea, EstadoTarea estado) {
+    Tarea tarea = new Tarea() { Estado = estado, Id = idTarea };
+    EjecutaNonQueryTareas(
+      @"UPDATE tareas SET estado = @estado WHERE id = @id;",
+      tarea
+    );
+  }
+
   public Tarea GetTarea(int idTarea) {
     String query = String.Format(
       "SELECT * FROM tareas WHERE id = {0};",

@@ -37,6 +37,7 @@
                 data-bs-target="#modal-cambiar-estado-tarea"
                 data-bs-tareaNombre="@tarea.Nombre"
                 data-bs-tareaEstado="@tarea.Estado"
+                data-bs-tareaId="@tarea.Id"
               >
                 Cambiar estado
               </button>
@@ -73,14 +74,19 @@
       </div>
       <div class="modal-body">
         <p>Estas por cambiar el estado de la tarea: <strong id="cambiar-estado-nombre"></strong></p>
-        <select class="form-select">
-          @foreach (var estado in Enum.GetValues(typeof(EstadoTarea)).Cast<EstadoTarea>()) {
-            <option value="@estado">@estado</option>
-          }
-        </select>
-        <div class="modal-footer">
-          <button class="btn btn-primary">Actualizar</button>
-        </div>
+        <form asp-controller="Tablero" asp-action="ModificarEstadoTarea" asp-route-idTarea="replaceTareaId" asp-route-idTablero=@Model.TableroId method="post">
+          <div class="mb-3">
+            <label class="form-label">Nuevo estado</label>
+            <select class="form-select" name="estado">
+              @foreach (var estado in Enum.GetValues(typeof(EstadoTarea))) {
+                <option value="@estado">@estado</option>
+              }
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

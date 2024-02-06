@@ -91,6 +91,12 @@ public class TableroController: Controller {
     return RedirectToAction("GetTareasByTableroId", new { idTablero });
   }
 
+  [HttpPost("{idTablero}/tareas/{idTarea}/modificar/estado")]
+  public IActionResult ModificarEstadoTarea(int idTablero, int idTarea, EstadoTarea estado) {
+    _tareaRepository.ModificarEstado(idTarea, estado);
+    return RedirectToAction("GetTareasByTableroId", new { idTablero });
+  }
+
   [HttpGet("{idTablero}/tareas/{idTarea}/eliminar")]
   public IActionResult EliminarTarea(int idTablero, int idTarea) {
     Tarea tarea = _tareaRepository.GetTarea(idTarea);
