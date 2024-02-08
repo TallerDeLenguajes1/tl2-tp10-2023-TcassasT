@@ -11,7 +11,7 @@
     <textarea class="form-control" asp-for="Descripcion"></textarea>
   </div>
   
-  <input type="text" class="form-control" asp-for="IdUsuarioPropietario" value="1" hidden>
+  <input type="text" class="form-control" asp-for="IdUsuarioPropietario" value=@Model.IdUsuarioPropietario hidden>
 
   <button type="submit" class="btn btn-primary">Crear</button>
 </form>

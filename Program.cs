@@ -18,6 +18,8 @@ string databaseConectionString = builder.Configuration.GetConnectionString("Sqli
 builder.Services.AddSingleton<string>(databaseConectionString);
 builder.Services.AddScoped<ITableroReposiroty, TableroRepository>();
 builder.Services.AddScoped<ITareaRepository, TareaRepository>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IUsuarioTableroRepository, UsuarioTableroRepository>();
 
 var app = builder.Build();
 

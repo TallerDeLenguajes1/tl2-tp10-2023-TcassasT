@@ -5,6 +5,11 @@ using Microsoft.Data.Sqlite;
 namespace tl2_tp10_2023_TcassasT.Models;
 
 public class TableroRepository: ITableroReposiroty {
+  private readonly string _databaseConectionString;
+  public TableroRepository(string databaseConectionString) {
+    _databaseConectionString = databaseConectionString;
+  }
+
   public List<Tablero> GetTableros() {
     String query = "SELECT * FROM tableros;";
     return EjecutaQueryReaderTableros(query);
@@ -26,14 +31,41 @@ public class TableroRepository: ITableroReposiroty {
     return EjecutaQueryReaderTableros(query);
   }
 
-  public void CrearTablero(Tablero tablero) {
-    String query = String.Format(
+  public List<Tablero> GetTablerosByTableroId(List<int> tablerosId) {
+    string tablerosQueryInStatement = "";
+    tablerosId.ForEach((int tableroId) => {
+      tablerosQueryInStatement += tableroId + ",";
+    });
+
+    if (tablerosQueryInStatement == "") {
+      return new List<Tablero>();
+    }
+
+    tablerosQueryInStatement = tablerosQueryInStatement.Substring(0, tablerosQueryInStatement.Length - 1);
+
+    string query = string.Format(
+      "SELECT * FROM tableros WHERE id IN ({0});",
+      tablerosQueryInStatement
+    );
+
+    return EjecutaQueryReaderTableros(query);
+  }
+
+  public int CrearTablero(Tablero tablero) {
+    string query = string.Format(
       "INSERT INTO tableros (idUsuarioPropietario, nombre, descripcion) VALUES ({0}, '{1}', '{2}');",
       tablero.IdUsuarioPropietario,
       tablero.Nombre,
       tablero.Descripcion
     );
     EjecutaNonQueryTableros(query);
+
+    string query2 = string.Format(
+      "SELECT * FROM tableros WHERE idUsuarioPropietario = {0} AND nombre = '{1}' AND descripcion = '{2}' ORDER BY id DESC",
+      tablero.IdUsuarioPropietario, tablero.Nombre, tablero.Descripcion
+    );
+    Tablero tableroRecienCreado = EjecutaQueryReaderTableros(query2)[0];
+    return tableroRecienCreado.Id;
   }
 
   public void ModificarTablero(int id, Tablero tablero) {
@@ -58,8 +90,7 @@ public class TableroRepository: ITableroReposiroty {
   private List<Tablero> EjecutaQueryReaderTableros(String query) {
     List<Tablero> tableros = new List<Tablero>();
 
-    string connectionString = "Data Source=DB/kanban.db;";
-    using (SqliteConnection connection = new SqliteConnection(connectionString)) {
+    using (SqliteConnection connection = new SqliteConnection(_databaseConectionString)) {
       connection.Open();
       
       SqliteCommand command = new SqliteCommand(query, connection);
@@ -83,8 +114,7 @@ public class TableroRepository: ITableroReposiroty {
   }
 
   private void EjecutaNonQueryTableros(String query) {
-    string connectionString = "Data Source=DB/kanban.db;";
-    using (SqliteConnection connection = new SqliteConnection(connectionString)) {
+    using (SqliteConnection connection = new SqliteConnection(_databaseConectionString)) {
       connection.Open();
       SqliteCommand command = new SqliteCommand(query, connection);
       command.ExecuteNonQuery();

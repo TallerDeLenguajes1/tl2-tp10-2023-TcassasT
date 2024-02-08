@@ -12,7 +12,10 @@ public class VerificarDatosEnSesion {
 
   public async Task Invoke(HttpContext context){
     bool requestVaALogin = context.Request.Path.StartsWithSegments("/Usuario/Login");
-    bool noHayDatosDeSesion = context.Session.GetString("NombreDeUsuario") == null || context.Session.GetString("Rol") == null;
+    bool noHayDatosDeSesion =
+      context.Session.GetString("NombreDeUsuario")  == null ||
+      context.Session.GetString("Rol")              == null ||
+      context.Session.GetInt32("UsuarioId")         == null;
 
     if (!requestVaALogin) {
       if (noHayDatosDeSesion) {

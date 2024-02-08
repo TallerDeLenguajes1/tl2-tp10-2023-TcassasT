@@ -10,27 +10,51 @@ public class TableroController: Controller {
   private readonly ILogger<TableroController> _logger;
   private readonly ITableroReposiroty _tableroReposiroty;
   private readonly ITareaRepository _tareaRepository;
-  public TableroController(ILogger<TableroController> logger, ITableroReposiroty tableroRepository, ITareaRepository tareaRepository) {
+  private readonly IUsuarioTableroRepository _usuarioTableroRepository;
+  public TableroController(ILogger<TableroController> logger, ITableroReposiroty tableroRepository, ITareaRepository tareaRepository, IUsuarioTableroRepository usuarioTableroRepository) {
       _logger = logger;
       _tableroReposiroty = tableroRepository;
       _tareaRepository = tareaRepository;
+      _usuarioTableroRepository = usuarioTableroRepository;
   }
 
   [HttpGet("")]
   public IActionResult GetTableros() {
-    int userId = 1;
-    List<Tablero> tableros = _tableroReposiroty.GetTablerosByUserId(userId);
+    int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
+
+    if (usuarioLogueado == null) {
+      throw new Exception("No existe sesion para identificar usuario creador");
+    }
+
+    List<Tablero> tableros = _tableroReposiroty.GetTablerosByUserId((int) usuarioLogueado);
+
     return View(tableros);
   }
 
   [HttpGet("nuevo")]
   public IActionResult CrearTablero() {
-    return View(new Tablero());
+    int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
+
+    if (usuarioLogueado == null) {
+      throw new Exception("No existe sesion para identificar usuario creador");
+    }
+
+    Tablero tablero = new Tablero() { IdUsuarioPropietario = (int) usuarioLogueado };
+
+    return View(tablero);
   }
 
   [HttpPost("nuevo")]
   public IActionResult CrearTablero(Tablero tablero) {
-    _tableroReposiroty.CrearTablero(tablero);
+    int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
+
+    if (usuarioLogueado == null) {
+      throw new Exception("No existe sesion para identificar usuario creador");
+    }
+
+    int tableroId = _tableroReposiroty.CrearTablero(tablero);
+    _usuarioTableroRepository.AgregarUsuarioATablero((int) usuarioLogueado, tableroId);
+    
     return RedirectToAction("GetTableros");
   }
 
