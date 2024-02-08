@@ -8,6 +8,10 @@ namespace tl2_tp10_2023_TcassasT.Models;
 
 public class UsuarioRepository: IUsuarioRepository {
   private static readonly byte[] salt = System.Text.Encoding.UTF8.GetBytes("J7f9rPm2qL1s5oKv");
+  private readonly string _databaseConectionString;
+  public UsuarioRepository(string databaseConectionString) {
+    _databaseConectionString = databaseConectionString;
+  }
 
   public List<Usuario> GetUsuarios() {
     return EjecutaQueryReaderUsuarios("SELECT * FROM usuarios;");
@@ -83,8 +87,7 @@ public class UsuarioRepository: IUsuarioRepository {
   private List<Usuario> EjecutaQueryReaderUsuarios(String query) {
     List<Usuario> usuarios = new List<Usuario>();
 
-    string connectionString = "Data Source=DB/kanban.db;";
-    using (SqliteConnection connection = new SqliteConnection(connectionString)) {
+    using (SqliteConnection connection = new SqliteConnection(_databaseConectionString)) {
       connection.Open();
       
       SqliteCommand command = new SqliteCommand(query, connection);
@@ -108,8 +111,7 @@ public class UsuarioRepository: IUsuarioRepository {
   }
 
   private void EjecutaNonQueryUsuarios(String query) {
-    string connectionString = "Data Source=DB/kanban.db;";
-    using (SqliteConnection connection = new SqliteConnection(connectionString)) {
+    using (SqliteConnection connection = new SqliteConnection(_databaseConectionString)) {
       connection.Open();
       SqliteCommand command = new SqliteCommand(query, connection);
       command.ExecuteNonQuery();

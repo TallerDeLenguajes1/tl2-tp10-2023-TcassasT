@@ -14,6 +14,8 @@ builder.Services.AddSession(options => {
     options.Cookie.IsEssential = true;
 });
 
+string databaseConectionString = builder.Configuration.GetConnectionString("SqliteConexion");
+builder.Services.AddSingleton<string>(databaseConectionString);
 builder.Services.AddScoped<ITableroReposiroty, TableroRepository>();
 builder.Services.AddScoped<ITareaRepository, TareaRepository>();
 

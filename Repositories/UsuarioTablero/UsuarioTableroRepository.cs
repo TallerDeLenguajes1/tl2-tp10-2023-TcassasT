@@ -2,6 +2,10 @@ using tl2_tp10_2023_TcassasT.Interfaces;
 using Microsoft.Data.Sqlite;
 
 public class UsuarioTableroRepository : IUsuarioTableroRepository {
+  private readonly string _databaseConectionString;
+  public UsuarioTableroRepository(string databaseConectionString) {
+    _databaseConectionString = databaseConectionString;
+  }
   public void AgregarUsuarioATablero(int usuarioId, int tableroId) {
     string query = string.Format(
       "INSERT INTO usuarioTablero (usuarioId, tableroId) VALUES ({0}, {1});",
@@ -20,7 +24,7 @@ public class UsuarioTableroRepository : IUsuarioTableroRepository {
 
   public List<UsuarioTablero> GetMembresias(int usuarioId) {
     string query = string.Format(
-      "SELECT * FROM usuarioTablero WHERE usuarioId = {0};",
+      "SELECT * FROM usuarioTablero LEFT OUTER JOIN tableros ON tableros.id = usuarioTablero.tableroId WHERE usuarioTablero.usuarioId = {0};",
       usuarioId
     );
     return EjecutaQueryReaderUsuarioTablero(query);
@@ -29,8 +33,7 @@ public class UsuarioTableroRepository : IUsuarioTableroRepository {
   private List<UsuarioTablero> EjecutaQueryReaderUsuarioTablero(String query) {
     List<UsuarioTablero> membrecias = new List<UsuarioTablero>();
 
-    string connectionString = "Data Source=DB/kanban.db;";
-    using (SqliteConnection connection = new SqliteConnection(connectionString)) {
+    using (SqliteConnection connection = new SqliteConnection(_databaseConectionString)) {
       connection.Open();
       
       SqliteCommand command = new SqliteCommand(query, connection);
@@ -53,8 +56,7 @@ public class UsuarioTableroRepository : IUsuarioTableroRepository {
   }
 
   private void EjecutaNonQueryUsuarioTablero(String query) {
-    string connectionString = "Data Source=DB/kanban.db;";
-    using (SqliteConnection connection = new SqliteConnection(connectionString)) {
+    using (SqliteConnection connection = new SqliteConnection(_databaseConectionString)) {
       connection.Open();
       SqliteCommand command = new SqliteCommand(query, connection);
       command.ExecuteNonQuery();

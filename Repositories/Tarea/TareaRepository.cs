@@ -6,6 +6,10 @@ using Microsoft.Data.Sqlite;
 namespace tl2_tp10_2023_TcassasT.Models;
 
 public class TareaRepository: ITareaRepository {
+  private readonly string _databaseConectionString;
+  public TareaRepository(string databaseConectionString) {
+    _databaseConectionString = databaseConectionString;
+  }
   public void CrearTareaEnTablero(Tarea tarea) {
     EjecutaNonQueryTareas(
       @"INSERT INTO tareas (nombre, descripcion, color, estado, idUsuarioAsignado, idTablero) VALUES (@nombre, @descripcion, @color, @estado, @idUsuarioAsignado, @idTablero)",
@@ -79,8 +83,7 @@ public class TareaRepository: ITareaRepository {
   private List<Tarea> EjecutaQueryReaderTareas(String query) {
     List<Tarea> tareas = new List<Tarea>();
 
-    string connectionString = "Data Source=DB/kanban.db;";
-    using (SqliteConnection connection = new SqliteConnection(connectionString)) {
+    using (SqliteConnection connection = new SqliteConnection(_databaseConectionString)) {
       connection.Open();
 
       SqliteCommand command = new SqliteCommand(query, connection);
@@ -107,8 +110,7 @@ public class TareaRepository: ITareaRepository {
   }
 
   private void EjecutaNonQueryTareas(String query, Tarea nuevaTarea) {
-    string connectionString = "Data Source=DB/kanban.db;";
-    using (SqliteConnection connection = new SqliteConnection(connectionString)) {
+    using (SqliteConnection connection = new SqliteConnection(_databaseConectionString)) {
       try {
         connection.Open();
 
