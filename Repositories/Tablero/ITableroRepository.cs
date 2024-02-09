@@ -7,6 +7,7 @@ public interface ITableroReposiroty {
   Tablero GetTablero(int id);
   List<Tablero> GetTablerosByUserId(int id);
   List<Tablero> GetTablerosByTableroId(List<int> tablerosId);
+  List<TableroExtendido> GetTablerosExtendidosByTableroId(List<int> tablerosId);
   int CrearTablero(Tablero tablero);
   void ModificarTablero(int id, Tablero tablero);
   void EliminarTablero(int id);

@@ -16,10 +16,12 @@ builder.Services.AddSession(options => {
 
 string databaseConectionString = builder.Configuration.GetConnectionString("SqliteConexion");
 builder.Services.AddSingleton<string>(databaseConectionString);
+
 builder.Services.AddScoped<ITableroReposiroty, TableroRepository>();
 builder.Services.AddScoped<ITareaRepository, TareaRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IUsuarioTableroRepository, UsuarioTableroRepository>();
+builder.Services.AddScoped<IActividadRepository, ActividadRepository>();
 
 var app = builder.Build();
 

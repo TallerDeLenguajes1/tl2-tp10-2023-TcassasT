@@ -11,3 +11,8 @@ public class Tablero {
   public String? Nombre { get => nombre; set => nombre = value; }
   public String? Descripcion { get => descripcion; set => descripcion = value; }
 }
+
+public class TableroExtendido : Tablero {
+  private List<Actividad> actividades = new List<Actividad>();
+  public List<Actividad> Actividades { get => actividades; set => actividades = value; }
+}

@@ -11,11 +11,13 @@ public class TableroController: Controller {
   private readonly ITableroReposiroty _tableroReposiroty;
   private readonly ITareaRepository _tareaRepository;
   private readonly IUsuarioTableroRepository _usuarioTableroRepository;
-  public TableroController(ILogger<TableroController> logger, ITableroReposiroty tableroRepository, ITareaRepository tareaRepository, IUsuarioTableroRepository usuarioTableroRepository) {
+  private readonly IActividadRepository _actividadRepository;
+  public TableroController(ILogger<TableroController> logger, ITableroReposiroty tableroRepository, ITareaRepository tareaRepository, IUsuarioTableroRepository usuarioTableroRepository, IActividadRepository actividadRepository) {
       _logger = logger;
       _tableroReposiroty = tableroRepository;
       _tareaRepository = tareaRepository;
       _usuarioTableroRepository = usuarioTableroRepository;
+      _actividadRepository = actividadRepository;
   }
 
   [HttpGet("")]
@@ -117,6 +119,13 @@ public class TableroController: Controller {
 
   [HttpPost("{idTablero}/tareas/{idTarea}/modificar/estado")]
   public IActionResult ModificarEstadoTarea(int idTablero, int idTarea, EstadoTarea estado) {
+    int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
+
+    if (usuarioLogueado == null) {
+      throw new Exception("No existe sesion para identificar actividad de usuario");
+    }
+
+    _actividadRepository.AgregarActividad((int) usuarioLogueado, idTablero, idTarea, "Cambio de estado a " + estado.ToString());
     _tareaRepository.ModificarEstado(idTarea, estado);
     return RedirectToAction("GetTareasByTableroId", new { idTablero });
   }

@@ -24,7 +24,7 @@ public class UsuarioTableroRepository : IUsuarioTableroRepository {
 
   public List<UsuarioTablero> GetMembresias(int usuarioId) {
     string query = string.Format(
-      "SELECT * FROM usuarioTablero LEFT OUTER JOIN tableros ON tableros.id = usuarioTablero.tableroId WHERE usuarioTablero.usuarioId = {0};",
+      "SELECT usuarioTablero.* FROM usuarioTablero LEFT OUTER JOIN tableros ON tableros.id = usuarioTablero.tableroId WHERE usuarioTablero.usuarioId = {0};",
       usuarioId
     );
     return EjecutaQueryReaderUsuarioTablero(query);

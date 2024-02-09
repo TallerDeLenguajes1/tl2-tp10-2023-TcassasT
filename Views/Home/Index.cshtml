@@ -12,8 +12,7 @@
       <div class="display-6">
         Tus tableros
       </div>
-      @foreach (Tablero tablero in @Model.tableros)
-      {
+      @foreach (TableroExtendido tablero in @Model.tableros) {
         <p>@tablero.Nombre</p>
       }
     </div>
@@ -21,6 +20,14 @@
       <div class="display-6">
         Ultima actividad
       </div>
+      @foreach (TableroExtendido tablero in @Model.tableros) {
+        @if (@tablero.Actividades.Count() > 0) {
+          <strong>En tablero @tablero.Nombre</strong>
+          <p class="m-0">Tarea #@tablero.Actividades[0].TareaId: @tablero.Actividades[0].ActividadTexto</p>
+          <p class="text-black-50 m-0">- @tablero.Actividades[0].Fecha</p>
+          <hr class="bg-danger border-2 border-top border-dark mt-0" />
+        }
+      }
     </div>
   </div>
 </div>

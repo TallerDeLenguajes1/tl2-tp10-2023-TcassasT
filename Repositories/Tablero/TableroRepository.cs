@@ -6,8 +6,10 @@ namespace tl2_tp10_2023_TcassasT.Models;
 
 public class TableroRepository: ITableroReposiroty {
   private readonly string _databaseConectionString;
-  public TableroRepository(string databaseConectionString) {
+  private readonly IActividadRepository _actividadRepository;
+  public TableroRepository(string databaseConectionString, IActividadRepository actividadRepository) {
     _databaseConectionString = databaseConectionString;
+    _actividadRepository = actividadRepository;
   }
 
   public List<Tablero> GetTableros() {
@@ -49,6 +51,24 @@ public class TableroRepository: ITableroReposiroty {
     );
 
     return EjecutaQueryReaderTableros(query);
+  }
+
+  public List<TableroExtendido> GetTablerosExtendidosByTableroId(List<int> tablerosId) {
+    List<TableroExtendido> tablerosExtendidos = new List<TableroExtendido>();
+    List<Tablero> tableros = GetTablerosByTableroId(tablerosId);
+
+    tableros.ForEach((Tablero tablero) => {
+      List<Actividad> actividades = _actividadRepository.GetActividadesByTableroId(tablero.Id);
+      tablerosExtendidos.Add(new TableroExtendido() {
+        Id = tablero.Id,
+        Nombre = tablero.Nombre,
+        Descripcion = tablero.Descripcion,
+        IdUsuarioPropietario = tablero.IdUsuarioPropietario,
+        Actividades = actividades,
+      });
+    });
+
+    return tablerosExtendidos;
   }
 
   public int CrearTablero(Tablero tablero) {
