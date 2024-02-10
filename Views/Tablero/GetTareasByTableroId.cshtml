@@ -16,31 +16,50 @@
         @foreach (var tarea in Model.TareasPorEstado[estado]) {
           <div class="card mt-2" style="width: 18rem;">
             <div class="card-body">
-              <h5 class="card-title">@tarea.Nombre</h5>
-              <h6 class="card-subtitle mb-2 text-muted">Ultima interacción: 02-02-2024</h6>
-              <p class="card-text">@tarea.Descripcion</p>
-              <!-- Button trigger modal -->
-              <button
-                type="button"
-                class="btn btn-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#modal-detalle-tarea"
-                data-bs-tareaNombre="@tarea.Nombre"
-                data-bs-tareaDescripcion="@tarea.Descripcion"
-              >
-                Ver detalle
-              </button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#modal-cambiar-estado-tarea"
-                data-bs-tareaNombre="@tarea.Nombre"
-                data-bs-tareaEstado="@tarea.Estado"
-                data-bs-tareaId="@tarea.Id"
-              >
-                Cambiar estado
-              </button>
+              <div class="d-flex">
+                <div class="flex-grow-1">
+                  <h5 class="card-title text-truncate" style="max-width: 200px; text-overflow: ellipsis;">@tarea.Nombre</h5>
+                </div>
+              </div>
+              <p class="card-text text-truncate" style="max-width: 500px;">@tarea.Descripcion</p>
+              <p class="modal-footer m-0">
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Acciones
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <button
+                        type="button"
+                        class="dropdown-item"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modal-detalle-tarea"
+                        data-bs-tareaNombre="@tarea.Nombre"
+                        data-bs-tareaDescripcion="@tarea.Descripcion"
+                        data-bs-tareaId="@tarea.Id"
+                        data-bs-tableroId="@tarea.IdTablero"
+                      >
+                        <i class="bi bi-info-square"></i>
+                        Ver detalle
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        type="button"
+                        class="dropdown-item"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modal-cambiar-estado-tarea"
+                        data-bs-tareaNombre="@tarea.Nombre"
+                        data-bs-tareaEstado="@tarea.Estado"
+                        data-bs-tareaId="@tarea.Id"
+                      >
+                        <i class="bi bi-pencil"></i>
+                        Cambiar estado
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </p>
             </div>
           </div>
         }
@@ -54,11 +73,13 @@
   <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="detalle-tarea-nombre">Modal title</h1>
+        <h1 class="modal-title fs-5" id="detalle-tarea-nombre">Cargando nombre de tarea...</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" id="detalle-tarea-descripcion">
-        <p>Modal body</p>
+      <div class="modal-body">
+        <p id="detalle-tarea-descripcion">Cargando descripcion...</p>
+        <strong class="mt-2 mb-1 border-bottom-1 border-danger">Actividades</strong>
+        <div id="detalle-tarea-actividades"></div>
       </div>
     </div>
   </div>

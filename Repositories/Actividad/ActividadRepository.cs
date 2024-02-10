@@ -23,6 +23,14 @@ public class ActividadRepository : IActividadRepository {
     return EjecutaQueryReaderActividad(query);
   }
 
+  public List<Actividad> GetActividadesByTareaId(int tareaId) {
+    string query = string.Format(
+      "SELECT * FROM actividad WHERE tareaId = {0} ORDER BY fecha DESC;",
+      tareaId
+    );
+    return EjecutaQueryReaderActividad(query);
+  }
+
   private List<Actividad> EjecutaQueryReaderActividad(string query) {
     List<Actividad> actividades = new List<Actividad>();
 

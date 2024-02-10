@@ -136,4 +136,16 @@ public class TableroController: Controller {
     _tareaRepository.EliminarTarea(idTarea);
     return RedirectToAction("GetTareasByTableroId", new { idTablero });
   }
+
+  [HttpGet("{idTablero}/actividad")]
+  public ICollection<Actividad> GetActividadByTableroId(int idTablero) {
+    List<Actividad> actividades = _actividadRepository.GetActividadesByTableroId(idTablero);
+    return actividades;
+  }
+
+  [HttpGet("{idTablero}/tareas/{idTarea}/actividad")]
+  public ICollection<Actividad> GetActividadByTareaId(int idTablero, int idTarea) {
+    List<Actividad> actividades = _actividadRepository.GetActividadesByTareaId(idTarea);
+    return actividades;
+  }
 }
