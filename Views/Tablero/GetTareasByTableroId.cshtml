@@ -16,7 +16,7 @@
           <h3>@estado</h3>
           <div class="d-flex flex-column">
             @foreach (var tarea in Model.TareasPorEstado[estado]) {
-              <div class="card mt-2" style="width: 18rem; overflow: hidden;">
+              <div class="card mt-2" style="width: 18rem;">
                 <div class="card-body">
                   <div class="d-flex">
                     <div class="flex-grow-1">
@@ -55,9 +55,21 @@
                             data-bs-tareaEstado="@tarea.Estado"
                             data-bs-tareaId="@tarea.Id"
                           >
-                            <i class="bi bi-pencil"></i>
+                            <i class="bi bi-arrow-left-right"></i>
                             Cambiar estado
                           </button>
+                        </li>
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            asp-controller="Tablero"
+                            asp-action="ModificarTarea"
+                            asp-route-idTablero=@tarea.IdTablero
+                            asp-route-idTarea=@tarea.Id
+                          >
+                            <i class="bi bi-pencil"></i>
+                            Editar tarea
+                          </a>
                         </li>
                       </ul>
                     </div>
