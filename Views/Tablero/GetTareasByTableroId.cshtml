@@ -155,7 +155,7 @@
       <div class="modal-body">
         <p>¿Estas seguro que quieres archviar la tarea: <strong id="archivar-nombre"></strong>?</p>
         <form asp-controller="Tablero" asp-action="ArchivarTarea" asp-route-idTarea="replaceTareaId" asp-route-idTablero=@Model.TableroId  method="post">
-          <input type="number" value=@ArchivadoTarea.ARCHIVADO name="archivado" readonly hidden>
+          <input type="number" value="@Convert.ToInt32(ArchivadoTarea.ARCHIVADO)" name="archivado" readonly>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Si</button>
           </div>
