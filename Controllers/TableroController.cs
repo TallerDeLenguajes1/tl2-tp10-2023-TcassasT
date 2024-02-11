@@ -113,7 +113,14 @@ public class TableroController: Controller {
 
   [HttpPost("{idTablero}/tareas/{idTarea}/modificar")]
   public IActionResult ModificarTarea(int idTablero, int idTarea, Tarea tarea) {
+    int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
+
+    if (usuarioLogueado == null) {
+      throw new Exception("No existe sesion para identificar actividad de usuario");
+    }
+
     _tareaRepository.ModificarTarea(idTarea, tarea);
+    _actividadRepository.AgregarActividad((int) usuarioLogueado, idTablero, idTarea, "Tarea modificada");
     return RedirectToAction("GetTareasByTableroId", new { idTablero });
   }
 
