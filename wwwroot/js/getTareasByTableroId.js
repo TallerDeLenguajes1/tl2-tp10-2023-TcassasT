@@ -21,6 +21,17 @@ $("#modal-cambiar-estado-tarea").on("show.bs.modal", (event) => {
   $("#modal-cambiar-estado-tarea form").attr("action", formAction.replace("replaceTareaId", tareaId));
 })
 
+$("#modal-archivar-tarea").on("show.bs.modal", (event) => {
+  debugger;
+  const button = event.relatedTarget;
+  const tareaNombre = button.getAttribute("data-bs-tareaNombre");
+  const tareaId = button.getAttribute("data-bs-tareaId");
+  const formAction = $("#modal-archivar-tarea form").attr("action");
+
+  $("#archivar-nombre").text(tareaNombre);
+  $("#modal-archivar-tarea form").attr("action", formAction.replace("replaceTareaId", tareaId));
+})
+
 function getActividadesByTareaId(tableroId, tareaId) {
   const url = `http://localhost:5235/tableros/${tableroId}/tareas/${tareaId}/actividad`;
 

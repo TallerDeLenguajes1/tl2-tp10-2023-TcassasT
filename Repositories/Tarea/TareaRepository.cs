@@ -33,6 +33,14 @@ public class TareaRepository: ITareaRepository {
     );
   }
 
+  public void ModificarArchivado(int idTarea, ArchivadoTarea archivado) {
+    Tarea tarea = new Tarea() { Archivada = archivado, Id = idTarea };
+    EjecutaNonQueryTareas(
+      @"UPDATE tareas SET archivada = @archivada WHERE id = @id;",
+      tarea
+    );
+  }
+
   public Tarea GetTarea(int idTarea) {
     String query = String.Format(
       "SELECT * FROM tareas WHERE id = {0};",
@@ -51,7 +59,7 @@ public class TareaRepository: ITareaRepository {
 
   public List<Tarea> GetTareasByTableroId(int idTablero) {
     String query = String.Format(
-      "SELECT * FROM tareas WHERE idTablero = {0};",
+      "SELECT * FROM tareas WHERE archivada = 0 AND idTablero = {0};",
       idTablero
     );
     return EjecutaQueryReaderTareas(query);
@@ -98,6 +106,7 @@ public class TareaRepository: ITareaRepository {
           tarea.Estado = (EstadoTarea) Convert.ToInt32(reader[4]);
           tarea.IdUsuarioAsignado = reader.IsDBNull(5) ? null : Convert.ToInt32(reader[5]);
           tarea.IdTablero = Convert.ToInt32(reader[6]);
+          tarea.Archivada = (ArchivadoTarea) Convert.ToInt32(reader[7]);
 
           tareas.Add(tarea);
         }
@@ -123,6 +132,7 @@ public class TareaRepository: ITareaRepository {
         command.Parameters.Add(new SqliteParameter("@estado", (int) nuevaTarea.Estado));
         command.Parameters.Add(new SqliteParameter("@idUsuarioAsignado", nuevaTarea.IdUsuarioAsignado == null ? (object) DBNull.Value : nuevaTarea.IdUsuarioAsignado));
         command.Parameters.Add(new SqliteParameter("@idTablero", nuevaTarea.IdTablero));
+        command.Parameters.Add(new SqliteParameter("@archivada", (int) nuevaTarea.Archivada));
 
         command.ToString();
 

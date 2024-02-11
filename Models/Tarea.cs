@@ -8,6 +8,11 @@ public enum EstadoTarea {
   DONE
 }
 
+public enum ArchivadoTarea {
+  NO_ARCHIVADO,
+  ARCHIVADO
+}
+
 public class Tarea {
   private int id;
   private String? nombre;
@@ -16,6 +21,7 @@ public class Tarea {
   private EstadoTarea estado;
   private int? idUsuarioAsignado;
   private int idTablero;
+  private ArchivadoTarea archivada;
 
   public int Id { get => id; set => id = value; }
   public String? Nombre { get => nombre; set => nombre = value; }
@@ -24,4 +30,5 @@ public class Tarea {
   public EstadoTarea Estado { get => estado; set => estado = value; }
   public int? IdUsuarioAsignado { get => idUsuarioAsignado; set => idUsuarioAsignado = value; }
   public int IdTablero { get => idTablero; set => idTablero = value; }
+  public ArchivadoTarea Archivada { get => archivada; set => archivada = value; }
 }

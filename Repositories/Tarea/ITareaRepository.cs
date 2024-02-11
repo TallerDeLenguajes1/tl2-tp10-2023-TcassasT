@@ -6,6 +6,7 @@ public interface ITareaRepository {
   void CrearTareaEnTablero(Tarea tarea);
   void ModificarTarea(int idTarea, Tarea tarea);
   void ModificarEstado(int idTarea, EstadoTarea estado);
+  void ModificarArchivado(int idTarea, ArchivadoTarea archivado);
   Tarea GetTarea(int idTarea);
   List<Tarea> GetTareasByUsuarioId(int idUsuario);
   List<Tarea> GetTareasByTableroId(int idTablero);

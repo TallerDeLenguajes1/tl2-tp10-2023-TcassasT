@@ -105,6 +105,19 @@ public class TableroController: Controller {
     return RedirectToAction("GetTareasByTableroId", new { idTablero });
   }
 
+  [HttpPost("{idTablero}/tareas/{idTarea}/archivar")]
+  public IActionResult ArchivarTarea(int idTablero, int idTarea, ArchivadoTarea archivado) {
+    int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
+
+    if (usuarioLogueado == null) {
+      throw new Exception("No existe sesion para identificar actividad de usuario");
+    }
+
+    _actividadRepository.AgregarActividad((int) usuarioLogueado, idTablero, idTarea, (archivado.Equals(ArchivadoTarea.ARCHIVADO) ? "Tarea archivada" : "Tarea des-archivada"));
+    _tareaRepository.ModificarArchivado(idTarea, archivado);
+    return RedirectToAction("GetTareasByTableroId", new { idTablero });
+  }
+
   [HttpGet("{idTablero}/tareas/{idTarea}/modificar")]
   public IActionResult ModificarTarea(int idTablero, int idTarea) {
     Tarea tareaAModificar = _tareaRepository.GetTarea(idTarea);
