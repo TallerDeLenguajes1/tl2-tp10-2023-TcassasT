@@ -2,18 +2,29 @@
 @using tl2_tp10_2023_TcassasT.ViewModels
 @model GetTareasByTableroIdViewModel
 
-<div style="display: flex; justify-content: space-between; align-items: center;">
-  <h1>Lista de tareas</h1>
-  <button type="button" class="btn btn-primary">
-    <a asp-controller="Tablero" asp-action="CrearTarea" asp-route-idTablero=@Model.TableroId style="text-decoration: none; color: white;">Crear tarea</a>
-  </button>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-2">
+  <h2 class="mb-3">Tablero: @Model.Tablero.Nombre</h2>
+  <div class="d-flex flex-wrap">
+    <button type="button" class="btn btn-primary me-2">
+      <i class="bi bi-plus"></i>
+      <a asp-controller="Tablero" asp-action="CrearTarea" asp-route-idTablero="@Model.Tablero.Id" class="text-decoration-none text-white">Crear tarea</a>
+    </button>
+    <button type="button" class="btn btn-warning me-2">
+      <i class="bi bi-archive" style="color: white;"></i>
+      <a asp-controller="Tablero" asp-action="CrearTarea" asp-route-idTablero="@Model.Tablero.Id" class="text-decoration-none text-white">Ver tareas archivadas</a>
+    </button>
+    <button type="button" class="btn btn-info">
+      <i class="bi bi-activity" style="color: white;"></i>
+      <a asp-controller="Tablero" asp-action="CrearTarea" asp-route-idTablero="@Model.Tablero.Id" class="text-decoration-none text-white">Ver actividad</a>
+    </button>
+  </div>
 </div>
-<div class="container" style="white-space: nowrap; max-height: 70vh;">
+<div style="white-space: nowrap; max-height: 70vh;">
   <div class="row g-2">
     <div class="d-flex" style="overflow-x: auto;">
       @foreach (var estado in Enum.GetValues(typeof(EstadoTarea)).Cast<EstadoTarea>()) {
         <div class="col me-2" style="min-width: 19rem; overflow-x: hidden;">
-          <h3>@estado</h3>
+          <h4>@estado</h4>
           <div class="d-flex flex-column" style="overflow-y: auto; max-height: 400px;">
             @foreach (var tarea in Model.TareasPorEstado[estado]) {
               <div class="card mt-2" style="width: 18rem;">
@@ -126,7 +137,7 @@
       </div>
       <div class="modal-body">
         <p>Estas por cambiar el estado de la tarea: <strong id="cambiar-estado-nombre"></strong></p>
-        <form asp-controller="Tablero" asp-action="ModificarEstadoTarea" asp-route-idTarea="replaceTareaId" asp-route-idTablero=@Model.TableroId method="post">
+        <form asp-controller="Tablero" asp-action="ModificarEstadoTarea" asp-route-idTarea="replaceTareaId" asp-route-idTablero=@Model.Tablero.Id method="post">
           <div class="mb-3">
             <label class="form-label">Nuevo estado</label>
             <select class="form-select" name="estado">
@@ -154,7 +165,7 @@
       </div>
       <div class="modal-body">
         <p>¿Estas seguro que quieres archviar la tarea: <strong id="archivar-nombre"></strong>?</p>
-        <form asp-controller="Tablero" asp-action="ArchivarTarea" asp-route-idTarea="replaceTareaId" asp-route-idTablero=@Model.TableroId  method="post">
+        <form asp-controller="Tablero" asp-action="ArchivarTarea" asp-route-idTarea="replaceTareaId" asp-route-idTablero=@Model.Tablero.Id  method="post">
           <input type="number" value="@Convert.ToInt32(ArchivadoTarea.ARCHIVADO)" name="archivado" readonly>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Si</button>

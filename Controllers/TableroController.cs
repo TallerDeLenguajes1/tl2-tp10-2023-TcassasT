@@ -83,12 +83,13 @@ public class TableroController: Controller {
   public ActionResult GetTareasByTableroId(int idTablero) {
     GetTareasByTableroIdViewModel vm = new GetTareasByTableroIdViewModel();
 
+    Tablero tablero = _tableroReposiroty.GetTablero(idTablero);
     List<Tarea> todasLasTareas = _tareaRepository.GetTareasByTableroId(idTablero);
     foreach (var tarea in todasLasTareas) {
       vm.TareasPorEstado[tarea.Estado].Add(tarea);
     }
 
-    vm.TableroId = idTablero;
+    vm.Tablero = tablero;
     vm.CantidadDeTareas = todasLasTareas.Count();
 
     return View(vm);
