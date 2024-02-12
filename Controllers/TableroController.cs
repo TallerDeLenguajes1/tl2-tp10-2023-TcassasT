@@ -170,6 +170,18 @@ public class TableroController: Controller {
     return View(actividadByTableroVM);
   }
 
+  [HttpGet("{idTablero}/tareas/archivadas")]
+  public IActionResult GetTareasArchivadasByTableroId(int idTablero) {
+    Tablero tablero = _tableroReposiroty.GetTablero(idTablero);
+    List<TareaArchivada> tareas = _tareaRepository.GetTareasArchivadasByTableroId(idTablero);
+
+    GetTareasArchivadasYTableroViewModel tareasYTableroVM = new GetTareasArchivadasYTableroViewModel();
+    tareasYTableroVM.Tablero = tablero;
+    tareasYTableroVM.Tareas = tareas;
+
+    return View(tareasYTableroVM);
+  }
+
   [HttpGet("{idTablero}/tareas/{idTarea}/actividad")]
   public ICollection<ActividadExtendida> GetActividadByTareaId(int idTablero, int idTarea) {
     List<ActividadExtendida> actividades = _actividadRepository.GetActividadesByTareaId(idTarea);

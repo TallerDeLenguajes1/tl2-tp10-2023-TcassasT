@@ -1,0 +1,72 @@
+@using tl2_tp10_2023_TcassasT.Models
+@using tl2_tp10_2023_TcassasT.ViewModels
+@model GetTareasArchivadasYTableroViewModel
+
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <h2>Tablero: @Model.Tablero.Nombre - tareas archivadas</h2>
+  <button type="button" class="btn btn-primary">
+    <i class="bi bi-arrow-90deg-left"></i>
+    <a asp-controller="Tablero" asp-action="GetTareasByTableroId" asp-route-idTablero=@Model.Tablero.Id style="text-decoration: none; color: white;">Volver al tablero</a>
+  </button>
+</div>
+@if (@Model.Tareas.Count > 0) {
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Tarea</th>
+        <th scope="col">Fecha de archivación</th>
+        <th scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach(TareaArchivada tarea in Model.Tareas) {
+        <tr>
+          <th scope="row">@tarea.Id</th>
+          <td>@tarea.Nombre</td>
+          <td>@tarea.ArchivadaFecha</td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-light"
+              data-bs-toggle="modal"
+              data-bs-target="#modal-desarchivar-tarea"
+              data-bs-tareaNombre="@tarea.Nombre"
+              data-bs-tareaEstado="@tarea.Estado"
+              data-bs-tareaId="@tarea.Id"
+            >
+              Desarchivar tarea
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+} else {
+  <p>Este tablero no tiene tareas archivadas</p>
+}
+
+<!-- Modal archivado de tarea -->
+<div class="modal fade" id="modal-desarchivar-tarea" tabindex="-1" aria-labelledby="desarchivar-tarea" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="desarchivar-tarea">Desarchivar tarea</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>¿Estas seguro que quieres desarchviar la tarea: <strong id="desarchivar-nombre"></strong>?</p>
+        <form asp-controller="Tablero" asp-action="ArchivarTarea" asp-route-idTarea="replaceTareaId" asp-route-idTablero=@Model.Tablero.Id  method="post">
+          <input type="number" value="@Convert.ToInt32(ArchivadoTarea.NO_ARCHIVADO)" name="archivado" readonly hidden>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Si</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  <script src="~/js/desarchivarTareas.js"></script>
+}

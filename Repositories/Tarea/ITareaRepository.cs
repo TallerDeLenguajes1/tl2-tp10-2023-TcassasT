@@ -11,6 +11,7 @@ public interface ITareaRepository {
   List<Tarea> GetTareasByUsuarioId(int idUsuario);
   List<Tarea> GetTareasByTableroId(int idTablero);
   List<Tarea> GetTareasByEstado(int estado);
+  List<TareaArchivada> GetTareasArchivadasByTableroId(int idTablero);
   void EliminarTarea(int idTarea);
   void AsignarTareaAUsuario(int idUsuario, int idTarea);
 }

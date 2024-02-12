@@ -32,3 +32,8 @@ public class Tarea {
   public int IdTablero { get => idTablero; set => idTablero = value; }
   public ArchivadoTarea Archivada { get => archivada; set => archivada = value; }
 }
+
+public class TareaArchivada : Tarea {
+  private string? archivadaFecha;
+  public string? ArchivadaFecha { get => archivadaFecha; set => archivadaFecha = value; }
+}

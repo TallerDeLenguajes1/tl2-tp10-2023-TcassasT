@@ -11,7 +11,7 @@
     </button>
     <button type="button" class="btn btn-warning me-2">
       <i class="bi bi-archive" style="color: white;"></i>
-      <a asp-controller="Tablero" asp-action="CrearTarea" asp-route-idTablero="@Model.Tablero.Id" class="text-decoration-none text-white">Ver tareas archivadas</a>
+      <a asp-controller="Tablero" asp-action="GetTareasArchivadasByTableroId" asp-route-idTablero="@Model.Tablero.Id" class="text-decoration-none text-white">Ver tareas archivadas</a>
     </button>
     <button type="button" class="btn btn-info">
       <i class="bi bi-activity" style="color: white;"></i>
@@ -166,7 +166,7 @@
       <div class="modal-body">
         <p>¿Estas seguro que quieres archviar la tarea: <strong id="archivar-nombre"></strong>?</p>
         <form asp-controller="Tablero" asp-action="ArchivarTarea" asp-route-idTarea="replaceTareaId" asp-route-idTablero=@Model.Tablero.Id  method="post">
-          <input type="number" value="@Convert.ToInt32(ArchivadoTarea.ARCHIVADO)" name="archivado" readonly>
+          <input type="number" value="@Convert.ToInt32(ArchivadoTarea.ARCHIVADO)" name="archivado" readonly hidden>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Si</button>
           </div>

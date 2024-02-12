@@ -73,6 +73,14 @@ public class TareaRepository: ITareaRepository {
     return EjecutaQueryReaderTareas(query);
   }
 
+  public List<TareaArchivada> GetTareasArchivadasByTableroId(int idTablero) {
+    string query = String.Format(
+      "SELECT t.*, a.fecha FROM tareas t LEFT JOIN ( SELECT tareaId, MAX(id) AS max_id, fecha FROM actividad WHERE actividadTexto = 'Tarea archivada' GROUP BY tareaId ) a ON t.id = a.tareaId WHERE t.archivada = 1 AND t.id = a.tareaId AND t.idTablero = {0} ORDER BY a.fecha DESC",
+      idTablero
+    );
+    return EjecutaQueryReaderTareasArchivadas(query);
+  }
+
   public void EliminarTarea(int idTarea) {
     Tarea tarea = new Tarea {
       Id = idTarea
@@ -107,6 +115,37 @@ public class TareaRepository: ITareaRepository {
           tarea.IdUsuarioAsignado = reader.IsDBNull(5) ? null : Convert.ToInt32(reader[5]);
           tarea.IdTablero = Convert.ToInt32(reader[6]);
           tarea.Archivada = (ArchivadoTarea) Convert.ToInt32(reader[7]);
+
+          tareas.Add(tarea);
+        }
+      }
+
+      connection.Close();
+    }
+
+    return tareas;
+  }
+
+  private List<TareaArchivada> EjecutaQueryReaderTareasArchivadas(String query) {
+    List<TareaArchivada> tareas = new List<TareaArchivada>();
+
+    using (SqliteConnection connection = new SqliteConnection(_databaseConectionString)) {
+      connection.Open();
+
+      SqliteCommand command = new SqliteCommand(query, connection);
+
+      using(var reader = command.ExecuteReader()) {
+        while (reader.Read()) {
+          TareaArchivada tarea = new TareaArchivada();
+          tarea.Id = Convert.ToInt32(reader[0]);
+          tarea.Nombre = reader[1].ToString();
+          tarea.Descripcion = reader[2].ToString();
+          tarea.Color = reader[3].ToString();
+          tarea.Estado = (EstadoTarea) Convert.ToInt32(reader[4]);
+          tarea.IdUsuarioAsignado = reader.IsDBNull(5) ? null : Convert.ToInt32(reader[5]);
+          tarea.IdTablero = Convert.ToInt32(reader[6]);
+          tarea.Archivada = (ArchivadoTarea) Convert.ToInt32(reader[7]);
+          tarea.ArchivadaFecha = reader[8].ToString();
 
           tareas.Add(tarea);
         }
