@@ -8,13 +8,13 @@
     <a asp-controller="Tablero" asp-action="CrearTarea" asp-route-idTablero=@Model.TableroId style="text-decoration: none; color: white;">Crear tarea</a>
   </button>
 </div>
-<div class="container" style="overflow: auto; white-space: nowrap; min-height: 70vh;">
+<div class="container" style="white-space: nowrap; max-height: 70vh;">
   <div class="row g-2">
-    <div class="d-flex">
+    <div class="d-flex" style="overflow-x: auto;">
       @foreach (var estado in Enum.GetValues(typeof(EstadoTarea)).Cast<EstadoTarea>()) {
         <div class="col me-2" style="min-width: 19rem; overflow-x: hidden;">
           <h3>@estado</h3>
-          <div class="d-flex flex-column" style="overflow-x: hidden; overflow-y: scroll; padding-right: 17px;">
+          <div class="d-flex flex-column" style="overflow-y: auto; max-height: 400px;">
             @foreach (var tarea in Model.TareasPorEstado[estado]) {
               <div class="card mt-2" style="width: 18rem;">
                 <div class="card-body">
@@ -24,7 +24,7 @@
                     </div>
                   </div>
                   <p class="card-text text-truncate" style="max-width: 500px;">@tarea.Descripcion</p>
-                  <p class="modal-footer m-0">
+                  <div class="modal-footer m-0">
                     <div class="dropdown">
                       <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Acciones
@@ -64,8 +64,8 @@
                             class="dropdown-item"
                             asp-controller="Tablero"
                             asp-action="ModificarTarea"
-                            asp-route-idTablero=@tarea.IdTablero
-                            asp-route-idTarea=@tarea.Id
+                            asp-route-idTablero="@tarea.IdTablero"
+                            asp-route-idTarea="@tarea.Id"
                           >
                             <i class="bi bi-pencil"></i>
                             Editar tarea
@@ -88,7 +88,7 @@
                         </li>
                       </ul>
                     </div>
-                  </p>
+                  </div>
                 </div>
               </div>
             }
@@ -110,7 +110,7 @@
       <div class="modal-body">
         <p id="detalle-tarea-descripcion">Cargando descripcion...</p>
         <strong class="mt-2 mb-1 border-bottom-1 border-danger">Actividades</strong>
-        <div id="detalle-tarea-actividades"></div>
+        <div id="detalle-tarea-actividades" style="max-height: 400px; overflow-y: scroll;"></div>
       </div>
     </div>
   </div>
