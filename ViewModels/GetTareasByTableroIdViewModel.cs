@@ -8,6 +8,7 @@ public class GetTareasByTableroIdViewModel {
   public Dictionary<EstadoTarea, List<Tarea>> TareasPorEstado { get; set; }
 
   public GetTareasByTableroIdViewModel() {
+    Tablero = new Tablero();
     TareasPorEstado = Enum.GetValues(typeof(EstadoTarea))
       .Cast<EstadoTarea>()
       .ToDictionary(tipo => tipo, tipo => new List<Tarea>());

@@ -14,3 +14,10 @@ public class Actividad {
   public string? ActividadTexto { get => actividadTexto; set => actividadTexto = value; }
   public DateTime Fecha { get => fecha; set => fecha = value; }
 }
+
+public class ActividadExtendida : Actividad {
+  private string? usuarioNombre;
+  private string? tareaNombre;
+  public string? UsuarioNombre { get => usuarioNombre; set => usuarioNombre = value; }
+  public string? TareaNombre { get => tareaNombre; set => tareaNombre = value; }
+}

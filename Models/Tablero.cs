@@ -13,6 +13,6 @@ public class Tablero {
 }
 
 public class TableroExtendido : Tablero {
-  private List<Actividad> actividades = new List<Actividad>();
-  public List<Actividad> Actividades { get => actividades; set => actividades = value; }
+  private List<ActividadExtendida> actividades = new List<ActividadExtendida>();
+  public List<ActividadExtendida> Actividades { get => actividades; set => actividades = value; }
 }

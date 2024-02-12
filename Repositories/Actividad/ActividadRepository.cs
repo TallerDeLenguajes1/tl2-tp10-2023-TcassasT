@@ -15,24 +15,24 @@ public class ActividadRepository : IActividadRepository {
     EjecutaNonQueryActividad(query);
   }
 
-  public List<Actividad> GetActividadesByTableroId(int tableroId) {
+  public List<ActividadExtendida> GetActividadesByTableroId(int tableroId) {
     string query = string.Format(
-      "SELECT * FROM actividad WHERE tableroId = {0} ORDER BY fecha DESC;",
+      "SELECT actividad.*, usuarios.nombreDeUsuario, tareas.nombre FROM actividad LEFT OUTER JOIN usuarios ON usuarios.id = actividad.usuarioId LEFT OUTER JOIN tareas ON tareas.id = actividad.TareaId WHERE tableroId = {0} ORDER BY fecha DESC;",
       tableroId
     );
     return EjecutaQueryReaderActividad(query);
   }
 
-  public List<Actividad> GetActividadesByTareaId(int tareaId) {
+  public List<ActividadExtendida> GetActividadesByTareaId(int tareaId) {
     string query = string.Format(
-      "SELECT * FROM actividad WHERE tareaId = {0} ORDER BY fecha DESC;",
+      "SELECT actividad.*, usuarios.nombreDeUsuario, tareas.nombre FROM actividad LEFT OUTER JOIN usuarios ON usuarios.id = actividad.usuarioId LEFT OUTER JOIN tareas ON tareas.id = actividad.TareaId WHERE tareaId = {0} ORDER BY fecha DESC;",
       tareaId
     );
     return EjecutaQueryReaderActividad(query);
   }
 
-  private List<Actividad> EjecutaQueryReaderActividad(string query) {
-    List<Actividad> actividades = new List<Actividad>();
+  private List<ActividadExtendida> EjecutaQueryReaderActividad(string query) {
+    List<ActividadExtendida> actividades = new List<ActividadExtendida>();
 
     using (SqliteConnection connection = new SqliteConnection(_databaseConectionString)) {
       connection.Open();
@@ -41,13 +41,15 @@ public class ActividadRepository : IActividadRepository {
 
       using(var reader = command.ExecuteReader()) {
         while (reader.Read()) {
-          Actividad actividad = new Actividad();
+          ActividadExtendida actividad = new ActividadExtendida();
           actividad.Id = Convert.ToInt32(reader[0]);
           actividad.UsuarioId = Convert.ToInt32(reader[1]);
           actividad.TableroId = Convert.ToInt32(reader[2]);
           actividad.TareaId = Convert.ToInt32(reader[3]);
           actividad.ActividadTexto = reader[4].ToString();
           actividad.Fecha = DateTime.Parse(reader[5].ToString());
+          actividad.UsuarioNombre = reader[6].ToString();
+          actividad.TareaNombre = reader[7].ToString();
           
           actividades.Add(actividad);
         }

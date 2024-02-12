@@ -1,0 +1,37 @@
+@using tl2_tp10_2023_TcassasT.Models
+@using tl2_tp10_2023_TcassasT.ViewModels
+@model GetActividadesByTableroIdViewModel
+
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <h2>Tablero: @Model.Tablero.Nombre - registro de actividad</h2>
+  <button type="button" class="btn btn-primary">
+    <i class="bi bi-arrow-90deg-left"></i>
+    <a asp-controller="Tablero" asp-action="GetTareasByTableroId" asp-route-idTablero=@Model.Tablero.Id style="text-decoration: none; color: white;">Volver al tablero</a>
+  </button>
+</div>
+@if (@Model.Actividades.Count > 0) {
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Tarea</th>
+        <th scope="col">Fecha</th>
+        <th scope="col">Actividad</th>
+        <th scope="col">Usuario</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach(ActividadExtendida actividad in Model.Actividades) {
+        <tr>
+          <th scope="row">@actividad.Id</th>
+          <td>@actividad.TareaNombre</td>
+          <td>@actividad.Fecha</td>
+          <td>@actividad.ActividadTexto</td>
+          <td>@actividad.UsuarioNombre</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+} else {
+  <p>Este tablero no tiene actividades registradas</p>
+}

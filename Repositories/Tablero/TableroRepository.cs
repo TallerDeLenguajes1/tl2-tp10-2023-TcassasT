@@ -58,7 +58,7 @@ public class TableroRepository: ITableroReposiroty {
     List<Tablero> tableros = GetTablerosByTableroId(tablerosId);
 
     tableros.ForEach((Tablero tablero) => {
-      List<Actividad> actividades = _actividadRepository.GetActividadesByTableroId(tablero.Id);
+      List<ActividadExtendida> actividades = _actividadRepository.GetActividadesByTableroId(tablero.Id);
       tablerosExtendidos.Add(new TableroExtendido() {
         Id = tablero.Id,
         Nombre = tablero.Nombre,

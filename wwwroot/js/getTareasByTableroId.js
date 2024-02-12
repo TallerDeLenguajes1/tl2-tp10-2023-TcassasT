@@ -62,7 +62,7 @@ function formateaEInsertaActividadesEnDOM(actividades) {
     actividadHtml.push(`
       <div>
         <p class="m-0">${actividad.actividadTexto}</p>
-        <p class="text-black-50 m-0 fw-ligh">Fecha: ${actividad.fecha}</p>
+        <p class="text-black-50 m-0 fw-ligh">Fecha: ${actividad.fecha} - Usuario: ${actividad.usuarioNombre}</p>
         <hr class="bg-danger border-2 border-top border-lightdark mt-0" />
       </div>
     `);
