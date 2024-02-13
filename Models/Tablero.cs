@@ -16,3 +16,8 @@ public class TableroExtendido : Tablero {
   private List<ActividadExtendida> actividades = new List<ActividadExtendida>();
   public List<ActividadExtendida> Actividades { get => actividades; set => actividades = value; }
 }
+
+public class TableroMembrecias : Tablero {
+  private List<Usuario> miembros = new List<Usuario>();
+  public List<Usuario> Miembros { get => miembros; set => miembros = value; }
+}

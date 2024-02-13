@@ -1,5 +1,5 @@
 @using tl2_tp10_2023_TcassasT.Models
-@model List<Tablero>
+@model List<TableroMembrecias>
 
 <div style="display: flex; justify-content: space-between; align-items: center;">
   <h1>Lista de tableros</h1>
@@ -16,10 +16,11 @@
         <th scope="col">Descripcion</th>
         <th scope="col" colspan="2">Acciones</th>
         <th scope="col">Tareas</th>
+        <th scope="col">Miembros</th>
       </tr>
     </thead>
     <tbody>
-      @foreach(Tablero tablero in Model) {
+      @foreach(TableroMembrecias tablero in Model) {
         <tr>
           <th scope="row">@tablero.Id</th>
           <td>@tablero.Nombre</td>
@@ -32,6 +33,9 @@
           </td>
           <td>
             <a asp-controller="Tablero" asp-action="GetTareasByTableroId" asp-route-idTablero=@tablero.Id>Ver tareas</a>
+          </td>
+          <td>
+            <a asp-controller="Tablero" asp-action="GetMiembrosByTableroId" asp-route-idTablero=@tablero.Id>Ver miembros (@tablero.Miembros.Count)</a>
           </td>
         </tr>
       }

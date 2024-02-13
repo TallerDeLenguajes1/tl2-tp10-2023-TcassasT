@@ -6,6 +6,8 @@ public interface IUsuarioRepository {
   void CrearUsuario(Usuario usuario);
   void ModificarUsuario(int id, Usuario usuario);
   List<Usuario> GetUsuarios();
+  List<Usuario> GetMiembrosDeTablero(int idTablero);
+  List<Usuario> GetCandidatosAMiembrosDeTablero(int idTablero, string busqueda);
   Usuario GetUsuario(int id);
   void EliminarUsuario(int id);
   Usuario Login(Usuario usuario);

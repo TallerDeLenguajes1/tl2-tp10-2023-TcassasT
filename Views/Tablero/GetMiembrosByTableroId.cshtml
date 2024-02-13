@@ -1,0 +1,137 @@
+@using tl2_tp10_2023_TcassasT.Models
+@using tl2_tp10_2023_TcassasT.ViewModels
+@model TableroMembrecias
+
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <h2>Tablero: @Model.Nombre - miembros</h2>
+  <button
+    id="boton-agregar-miembro"
+    type="button"
+    class="btn btn-light"
+    data-bs-toggle="modal"
+    data-bs-target="#modal-agregar-miembro"
+    data-bs-tableroId=@Model.Id
+  >
+    <i class="bi bi-plus"></i>
+    Agregar un nuevo miembro
+  </button>
+</div>
+@if (@Model.Miembros.Count > 0) {
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Rol</th>
+        <th scope="col" colspan="2">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach(Usuario usuario in Model.Miembros) {
+        <tr>
+          <th scope="row">@usuario.Id</th>
+          <td>@usuario.NombreDeUsario</td>
+          <td>@(usuario.Id.Equals(@Model.IdUsuarioPropietario) ? "Propietario" : "Miembro")</td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-warning"
+              data-bs-toggle="modal"
+              data-bs-target="#modal-otorgar-propiedad"
+              disabled=@usuario.Id.Equals(@Model.IdUsuarioPropietario)
+              data-bs-usuarioId=@usuario.Id
+              data-bs-usuarioNombre="@usuario.NombreDeUsario"
+            >
+              Transferir propiedad
+            </button>
+          </td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-danger"
+              data-bs-toggle="modal"
+              data-bs-target="#modal-remover-miembro"
+              data-bs-usuarioId=@usuario.Id
+              data-bs-usuarioNombre="@usuario.NombreDeUsario"
+            >
+              Remover miembro
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+} else {
+  <p>Este tablero no tiene tareas archivadas</p>
+}
+
+@* TODO hacer que este codigo ⬇️ esté o no esté dependiendo si el usuario logueado es el propietario *@
+
+<!-- Modal remover miembro -->
+<div class="modal fade" id="modal-remover-miembro" tabindex="-1" aria-labelledby="remover-miembro" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="remover-miembro">Remover miembro</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>¿Estas seguro que quieres remover al miebro: <strong id="remover-miembro-nombre"></strong>?</p>
+        <form asp-controller="Tablero" asp-action="RemoverMiembroDeTablero" asp-route-idTablero=@Model.Id  method="post">
+          <input type="number" id="remover-miembro-id" name="idUsuario" readonly hidden>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Si</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal otorgar propiedad -->
+<div class="modal fade" id="modal-otorgar-propiedad" tabindex="-1" aria-labelledby="otorgar-propiedad" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="otorgar-propiedad">Otorgar propiedad</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>¿Estas seguro que quieres otorgar la propiedad de este tablero a: <strong id="otorgar-propiedad-nombre"></strong>?</p>
+        <form asp-controller="Tablero" asp-action="ArchivarTarea" asp-route-idTablero=@Model.Id  method="post">
+          <input type="number" id="otorgar-propiedad-id" name="idUsuario" readonly hidden>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Si</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal agregar miembro -->
+<div class="modal fade" id="modal-agregar-miembro" tabindex="-1" aria-labelledby="agregar-miembro" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="agregar-miembro">Agregar miembro al tablero</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Elige el usuario que deseas agregar</p>
+        <form asp-controller="Tablero" asp-action="AgregarMiembroATablero" asp-route-idTablero=@Model.Id  method="post">
+          <label class="form-label">Buscar usuario</label>
+          <select id="agregar-miembro-select" class="from-control" name="idUsuario" data-live-search="true">
+          </select>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Agregar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  <script src="~/js/manejoMiembros.js"></script>
+}

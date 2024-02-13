@@ -12,12 +12,14 @@ public class TableroController: Controller {
   private readonly ITareaRepository _tareaRepository;
   private readonly IUsuarioTableroRepository _usuarioTableroRepository;
   private readonly IActividadRepository _actividadRepository;
-  public TableroController(ILogger<TableroController> logger, ITableroReposiroty tableroRepository, ITareaRepository tareaRepository, IUsuarioTableroRepository usuarioTableroRepository, IActividadRepository actividadRepository) {
+  private readonly IUsuarioRepository _usuarioRepository;
+  public TableroController(ILogger<TableroController> logger, ITableroReposiroty tableroRepository, ITareaRepository tareaRepository, IUsuarioTableroRepository usuarioTableroRepository, IActividadRepository actividadRepository, IUsuarioRepository usuarioRepository) {
       _logger = logger;
       _tableroReposiroty = tableroRepository;
       _tareaRepository = tareaRepository;
       _usuarioTableroRepository = usuarioTableroRepository;
       _actividadRepository = actividadRepository;
+      _usuarioRepository = usuarioRepository;
   }
 
   [HttpGet("")]
@@ -28,9 +30,15 @@ public class TableroController: Controller {
       throw new Exception("No existe sesion para identificar usuario creador");
     }
 
+    List<int> tablerosPertenecientes = new List<int>();
     List<Tablero> tableros = _tableroReposiroty.GetTablerosByUserId((int) usuarioLogueado);
+    tableros.ForEach((Tablero tablero) => {
+      tablerosPertenecientes.Add(tablero.Id);
+    });
 
-    return View(tableros);
+    List<TableroMembrecias> tablerosConMiembros = _tableroReposiroty.GetTablerosMembreciasByTableroId(tablerosPertenecientes);
+
+    return View(tablerosConMiembros);
   }
 
   [HttpGet("nuevo")]
@@ -158,18 +166,6 @@ public class TableroController: Controller {
     return RedirectToAction("GetTareasByTableroId", new { idTablero });
   }
 
-  [HttpGet("{idTablero}/actividad")]
-  public IActionResult GetActividadByTableroId(int idTablero) {
-    Tablero tablero = _tableroReposiroty.GetTablero(idTablero);
-    List<ActividadExtendida> actividades = _actividadRepository.GetActividadesByTableroId(idTablero);
-    
-    GetActividadesByTableroIdViewModel actividadByTableroVM = new GetActividadesByTableroIdViewModel();
-    actividadByTableroVM.Tablero = tablero;
-    actividadByTableroVM.Actividades = actividades;
-
-    return View(actividadByTableroVM);
-  }
-
   [HttpGet("{idTablero}/tareas/archivadas")]
   public IActionResult GetTareasArchivadasByTableroId(int idTablero) {
     Tablero tablero = _tableroReposiroty.GetTablero(idTablero);
@@ -186,5 +182,41 @@ public class TableroController: Controller {
   public ICollection<ActividadExtendida> GetActividadByTareaId(int idTablero, int idTarea) {
     List<ActividadExtendida> actividades = _actividadRepository.GetActividadesByTareaId(idTarea);
     return actividades;
+  }
+
+  [HttpGet("{idTablero}/actividad")]
+  public IActionResult GetActividadByTableroId(int idTablero) {
+    Tablero tablero = _tableroReposiroty.GetTablero(idTablero);
+    List<ActividadExtendida> actividades = _actividadRepository.GetActividadesByTableroId(idTablero);
+    
+    GetActividadesByTableroIdViewModel actividadByTableroVM = new GetActividadesByTableroIdViewModel();
+    actividadByTableroVM.Tablero = tablero;
+    actividadByTableroVM.Actividades = actividades;
+
+    return View(actividadByTableroVM);
+  }
+
+  [HttpGet("{idTablero}/miembros")]
+  public IActionResult GetMiembrosByTableroId(int idTablero) {
+    TableroMembrecias tableroMembrecias = _tableroReposiroty.GetTableroMembreciasByTableroId(idTablero);
+    return View(tableroMembrecias);
+  }
+
+  [HttpGet("{idTablero}/miembros/candidatos")]
+  public ICollection<Usuario> GetCandidatosAMiembrosByTableroId(int idTablero, string busqueda) {
+    List<Usuario> candidatos = _usuarioRepository.GetCandidatosAMiembrosDeTablero(idTablero, busqueda);
+    return candidatos;
+  }
+
+  [HttpPost("{idTablero}/miembros/agregar")]
+  public IActionResult AgregarMiembroATablero(int idTablero, int idUsuario) {
+    _usuarioTableroRepository.AgregarUsuarioATablero(idUsuario, idTablero);
+    return RedirectToAction("GetMiembrosByTableroId", new { idTablero });
+  }
+
+  [HttpPost("{idTablero}/miembros/remover")]
+  public IActionResult RemoverMiembroDeTablero(int idTablero, int idUsuario) {
+    _usuarioTableroRepository.RemoverUsuarioDeTablero(idUsuario, idTablero);
+    return RedirectToAction("GetMiembrosByTableroId", new { idTablero });
   }
 }

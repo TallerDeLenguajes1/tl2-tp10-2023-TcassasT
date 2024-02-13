@@ -7,9 +7,11 @@ namespace tl2_tp10_2023_TcassasT.Models;
 public class TableroRepository: ITableroReposiroty {
   private readonly string _databaseConectionString;
   private readonly IActividadRepository _actividadRepository;
-  public TableroRepository(string databaseConectionString, IActividadRepository actividadRepository) {
+  private readonly IUsuarioRepository _usuarioRepository;
+  public TableroRepository(string databaseConectionString, IActividadRepository actividadRepository, IUsuarioRepository usuarioRepository) {
     _databaseConectionString = databaseConectionString;
     _actividadRepository = actividadRepository;
+    _usuarioRepository = usuarioRepository;
   }
 
   public List<Tablero> GetTableros() {
@@ -69,6 +71,39 @@ public class TableroRepository: ITableroReposiroty {
     });
 
     return tablerosExtendidos;
+  }
+
+  public TableroMembrecias GetTableroMembreciasByTableroId(int id) {
+    Tablero tablero = GetTablero(id);
+    List<Usuario> miembros = _usuarioRepository.GetMiembrosDeTablero(id);
+
+    TableroMembrecias tableroMembrecias = new TableroMembrecias() {
+      Id = tablero.Id,
+      Nombre = tablero.Nombre,
+      Descripcion = tablero.Descripcion,
+      IdUsuarioPropietario = tablero.IdUsuarioPropietario,
+      Miembros = miembros
+    };
+
+    return tableroMembrecias;
+  }
+
+  public List<TableroMembrecias> GetTablerosMembreciasByTableroId(List<int> tablerosId) {
+    List<TableroMembrecias> tablerosMembrecias = new List<TableroMembrecias>();
+    List<Tablero> tableros = GetTablerosByTableroId(tablerosId);
+
+    tableros.ForEach((Tablero tablero) => {
+      List<Usuario> miembros = _usuarioRepository.GetMiembrosDeTablero(tablero.Id);
+      tablerosMembrecias.Add(new TableroMembrecias() {
+        Id = tablero.Id,
+        Nombre = tablero.Nombre,
+        Descripcion = tablero.Descripcion,
+        IdUsuarioPropietario = tablero.IdUsuarioPropietario,
+        Miembros = miembros
+      });
+    });
+
+    return tablerosMembrecias;
   }
 
   public int CrearTablero(Tablero tablero) {

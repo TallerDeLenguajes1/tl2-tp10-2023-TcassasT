@@ -33,7 +33,7 @@ $("#modal-archivar-tarea").on("show.bs.modal", (event) => {
 })
 
 function getActividadesByTareaId(tableroId, tareaId) {
-  const url = `http://localhost:5235/tableros/${tableroId}/tareas/${tareaId}/actividad`;
+  const url = `/tableros/${tableroId}/tareas/${tareaId}/actividad`;
 
   fetch(url)
     .then(response => {

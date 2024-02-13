@@ -25,6 +25,23 @@ public class UsuarioRepository: IUsuarioRepository {
     return EjecutaQueryReaderUsuarios(query)[0];
   }
 
+  public List<Usuario> GetMiembrosDeTablero(int idTablero) {
+    string query = string.Format(
+      "SELECT usuarios.* FROM usuarios, usuarioTablero WHERE usuarioTablero.usuarioId = usuarios.id AND usuarioTablero.tableroId = {0};",
+      idTablero
+    );
+    return EjecutaQueryReaderUsuarios(query);
+  }
+
+  public List<Usuario> GetCandidatosAMiembrosDeTablero(int idTablero, string busqueda) {
+    string query = string.Format(
+      "SELECT * FROM usuarios u WHERE NOT EXISTS (SELECT * FROM usuarioTablero ut	WHERE ut.usuarioid = u.id AND ut.tableroid = {0}) AND u.nombreDeUsuario like '%{1}%' LIMIT 50;",
+      idTablero,
+      string.IsNullOrEmpty(busqueda) ? "" : busqueda
+    );
+    return EjecutaQueryReaderUsuarios(query);
+  }
+
   public void CrearUsuario(Usuario usuario) {
     String query = String.Format(
       "INSERT INTO usuarios (nombreDeUsuario, rol, contrasenia) VALUES ('{0}', {1}, '{2}');",
