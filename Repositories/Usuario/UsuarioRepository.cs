@@ -68,8 +68,9 @@ public class UsuarioRepository: IUsuarioRepository {
 
   public void ModificarUsuario(int id, Usuario usuario) {
     String query = String.Format(
-      "UPDATE usuarios SET nombreDeUsuario = '{0}' WHERE id = {1};",
+      "UPDATE usuarios SET nombreDeUsuario = '{0}', rol = {1} WHERE id = {2};",
       usuario.NombreDeUsario,
+      (int) usuario.Rol,
       id
     );
     EjecutaNonQueryUsuarios(query);

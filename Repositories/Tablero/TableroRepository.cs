@@ -29,7 +29,7 @@ public class TableroRepository: ITableroReposiroty {
 
   public List<Tablero> GetTablerosByUserId(int id) {
     String query = String.Format(
-      "SELECT * FROM tableros WHERE idUsuarioPropietario = {0};",
+      "SELECT tableros.* FROM tableros, usuarioTablero WHERE usuarioTablero.tableroId = tableros.id AND usuarioTablero.usuarioId = {0};",
       id
     );
     return EjecutaQueryReaderTableros(query);

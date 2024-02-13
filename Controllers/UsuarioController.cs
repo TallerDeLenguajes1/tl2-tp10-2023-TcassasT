@@ -60,7 +60,7 @@ public class UsuarioController : Controller {
 
     HttpContext.Session.SetInt32("UsuarioId", usuarioLogueado.Id);
     HttpContext.Session.SetString("NombreDeUsuario", usuarioLogueado.NombreDeUsario);
-    HttpContext.Session.SetString("Rol", Convert.ToString((int) usuarioLogueado.Rol));
+    HttpContext.Session.SetInt32("Rol", (int) usuarioLogueado.Rol);
 
     return RedirectToAction("Index", "Home");
   }

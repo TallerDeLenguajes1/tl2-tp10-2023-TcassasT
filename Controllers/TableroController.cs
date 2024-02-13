@@ -198,8 +198,28 @@ public class TableroController: Controller {
 
   [HttpGet("{idTablero}/miembros")]
   public IActionResult GetMiembrosByTableroId(int idTablero) {
+    int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
+    int? usuarioRol = HttpContext.Session.GetInt32("Rol");
+
+    if (usuarioLogueado == null || usuarioRol == null) {
+      throw new Exception("No existe sesion para identificar actividad de usuario");
+    }
+
     TableroMembrecias tableroMembrecias = _tableroReposiroty.GetTableroMembreciasByTableroId(idTablero);
-    return View(tableroMembrecias);
+    Usuario? usuarioPropietario = tableroMembrecias.Miembros.Find(
+      (Usuario usuario) => usuario.Id == tableroMembrecias.IdUsuarioPropietario
+    );
+
+    bool puedeAdministrarMiembros = usuarioRol.Equals((int) RolUsuario.ADMINISTRADOR) ||
+      (usuarioPropietario != null && usuarioPropietario.Id == usuarioLogueado);
+
+    GetMiembrosByTableroIdViewModel getMiembrosVM = new GetMiembrosByTableroIdViewModel() {
+      UsuarioLogueado = (int) usuarioLogueado,
+      TableroMembrecias = tableroMembrecias,
+      PuedeAdministrarMiembros = puedeAdministrarMiembros
+    };
+
+    return View(getMiembrosVM);
   }
 
   [HttpGet("{idTablero}/miembros/candidatos")]
