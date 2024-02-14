@@ -239,4 +239,23 @@ public class TableroController: Controller {
     _usuarioTableroRepository.RemoverUsuarioDeTablero(idUsuario, idTablero);
     return RedirectToAction("GetMiembrosByTableroId", new { idTablero });
   }
+
+  [HttpPost("{idTablero}/miembros/propietario")]
+  public IActionResult OtorgarPropiedadTablero(int idTablero, int idUsuario) {
+    Tablero tablero = _tableroReposiroty.GetTablero(idTablero);
+    Usuario nuevoUsuario = _usuarioRepository.GetUsuario(idUsuario);
+
+    if (nuevoUsuario == null) {
+      throw new Exception("No se pudo otorgar propiedad: usuario inexistente");
+    }
+
+    if (tablero.IdUsuarioPropietario == nuevoUsuario.Id) {
+      throw new Exception("No se pudo otorgar propiedad: usuario ya es propietario");
+    }
+
+    tablero.IdUsuarioPropietario = nuevoUsuario.Id;
+    _tableroReposiroty.ModificarTablero(idTablero, tablero);
+
+    return RedirectToAction("GetMiembrosByTableroId", new { idTablero });
+  }
 }

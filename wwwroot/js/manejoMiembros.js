@@ -1,8 +1,14 @@
 $("#modal-remover-miembro").on("show.bs.modal", (event) => {
+  debugger;
   const button = event.relatedTarget;
   const usuarioId = button.getAttribute("data-bs-usuarioId");
   const usuarioNombre = button.getAttribute("data-bs-usuarioNombre");
+  const usuarioLogueado = button.getAttribute("data-bs-usuarioLogueado");
 
+  const modalMensaje = (usuarioId == usuarioLogueado) ?
+    "¿Estas seguro que quieres salir de este tablero?" :
+    "¿Estas seguro que quieres remover al miembro: <strong id='remover-miembro-nombre'></strong>?";
+  $("#remover-miembro-mensaje").html(modalMensaje);
   $("#remover-miembro-id").val(usuarioId);
   $("#remover-miembro-nombre").text(usuarioNombre);
 })

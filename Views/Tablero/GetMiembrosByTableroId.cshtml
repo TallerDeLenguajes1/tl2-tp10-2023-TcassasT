@@ -55,8 +55,9 @@
                 data-bs-toggle="modal"
                 data-bs-target="#modal-remover-miembro"
                 data-bs-usuarioId=@usuario.Id
+                data-bs-usuarioLogueado=@Model.UsuarioLogueado
                 data-bs-usuarioNombre="@usuario.NombreDeUsario"
-                disabled=@(Model.PuedeAdministrarMiembros && usuario.Id.Equals(@Model.UsuarioLogueado))
+                disabled=@(Model.PuedeAdministrarMiembros && usuario.Id.Equals(Model.UsuarioLogueado) && Model.TableroMembrecias.IdUsuarioPropietario.Equals(Model.UsuarioLogueado))
               >
                 @(usuario.Id.Equals(@Model.UsuarioLogueado) ? "Salir del tablero" : "Remover miembro")
               </button>
@@ -79,11 +80,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        @if(Model.PuedeAdministrarMiembros) {
-          <p>¿Estas seguro que quieres remover al miembro: <strong id="remover-miembro-nombre"></strong>?</p>
-        } else {
-          <p>¿Estas seguro que quieres salir de este tablero?</p>
-        }
+        <p id="remover-miembro-mensaje"></p>
         <form asp-controller="Tablero" asp-action="RemoverMiembroDeTablero" asp-route-idTablero=@Model.TableroMembrecias.Id  method="post">
           <input type="number" id="remover-miembro-id" name="idUsuario" readonly hidden>
           <div class="modal-footer">
@@ -106,7 +103,7 @@
         </div>
         <div class="modal-body">
           <p>¿Estas seguro que quieres otorgar la propiedad de este tablero a: <strong id="otorgar-propiedad-nombre"></strong>?</p>
-          <form asp-controller="Tablero" asp-action="ArchivarTarea" asp-route-idTablero=@Model.TableroMembrecias.Id  method="post">
+          <form asp-controller="Tablero" asp-action="OtorgarPropiedadTablero" asp-route-idTablero=@Model.TableroMembrecias.Id  method="post">
             <input type="number" id="otorgar-propiedad-id" name="idUsuario" readonly hidden>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary">Si</button>
