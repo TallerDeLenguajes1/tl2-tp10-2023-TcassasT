@@ -1,7 +1,12 @@
+@{
+  ViewData["Title"] = "Crear un tablero nuevo";
+}
+
 @using tl2_tp10_2023_TcassasT.Models
 @model Tablero
 
 <form asp-controller="Tablero" asp-action="CrearTablero" method="post">
+  <h2 class="mb-3">Crear un tablero nuevo</h2>
   <div class="mb-3">
     <label class="form-label">Nombre</label>
     <input type="text" class="form-control" asp-for="Nombre">

@@ -1,7 +1,12 @@
+@{
+  ViewData["Title"] = "Modificar tarea: " + @Model.Nombre;
+}
+
 @using tl2_tp10_2023_TcassasT.Models
 @model Tarea
 
 <form asp-controller="Tablero" asp-action="ModificarTarea" asp-route-idTablero=@Model.IdTablero asp-route-idTarea=@Model.Id method="post">
+  <h2 class="mb-3">Modificar tablero: @Model.Nombre</h2> 
   <div class="mb-3">
     <label class="form-label">Nombre de tarea</label>
     <input type="text" class="form-control" asp-for="Nombre" value=@Model.Nombre>

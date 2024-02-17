@@ -1,8 +1,12 @@
+@{
+  ViewData["Title"] = "Listado de tableros";
+}
+
 @using tl2_tp10_2023_TcassasT.Models
 @model List<TableroMembrecias>
 
 <div style="display: flex; justify-content: space-between; align-items: center;">
-  <h1>Lista de tableros</h1>
+  <h2 class="mb-3">Mis tableros</h2>
   <button type="button" class="btn btn-primary">
     <a asp-controller="Tablero" asp-action="CrearTablero" style="text-decoration: none; color: white;">Crear tablero</a>
   </button>

@@ -12,21 +12,36 @@
       <div class="display-6">
         Tus tableros
       </div>
-      @foreach (TableroExtendido tablero in @Model.tableros) {
-        <p>@tablero.Nombre</p>
+      @if (@Model.tableros.Count > 0) {
+        @for(int i = 0; i < @Model.tableros.Count && i < 5; i++) {
+          @foreach (TableroExtendido tablero in @Model.tableros) {
+            <a asp-controller="Tablero" asp-action="GetTareasByTableroId" asp-route-idTablero=@tablero.Id>@tablero.Nombre</a>
+          }
+        }
+        @if (@Model.tableros.Count > 5) {
+          <a class="nav-link text-dark" asp-area="" asp-controller="Tablero" asp-action="GetTableros">Ver todos mis tableros...</a>
+        }
+      } else {
+        <p>Aún no cuentas con tableros creados, <a asp-controller="Tablero" asp-action="CrearTablero">¡Crea uno aquí!</a></p>
       }
     </div>
     <div class="col">
       <div class="display-6">
         Ultima actividad
       </div>
-      @foreach (TableroExtendido tablero in @Model.tableros) {
-        @if (@tablero.Actividades.Count() > 0) {
+      @if (@Model.tableros.Count > 0) {
+        @foreach (TableroExtendido tablero in @Model.tableros) {
           <strong>En tablero @tablero.Nombre</strong>
-          <p class="m-0">Tarea #@tablero.Actividades[0].TareaId: @tablero.Actividades[0].ActividadTexto</p>
-          <p class="text-black-50 m-0">- @tablero.Actividades[0].Fecha</p>
+          @if (@tablero.Actividades.Count() > 0) {
+            <p class="m-0">Tarea #@tablero.Actividades[0].TareaId: @tablero.Actividades[0].ActividadTexto</p>
+            <p class="text-black-50 m-0">- @tablero.Actividades[0].Fecha</p>
+          } else {
+            <p class="m-0">Este tablero no cuenta con actividad reciente...</p>
+          }
           <hr class="bg-danger border-2 border-top border-dark mt-0" />
         }
+      } else {
+        <p>Debes crear o pertenecer al tablero de otro usuario para ver su actividad</p>
       }
     </div>
   </div>

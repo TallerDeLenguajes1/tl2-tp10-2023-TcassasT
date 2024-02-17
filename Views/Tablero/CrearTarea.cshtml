@@ -1,7 +1,12 @@
+@{
+  ViewData["Title"] = "Crear una tarea nueva";
+}
+
 @using tl2_tp10_2023_TcassasT.Models
 @model Tarea
 
 <form asp-controller="Tablero" asp-action="CrearTarea" method="post">
+  <h2 class="mb-3">Crear una tarea nueva</h2>
   <div class="mb-3">
     <label class="form-label">Nombre de tarea</label>
     <input type="text" class="form-control" asp-for="Nombre">
