@@ -11,15 +11,16 @@ public class VerificarDatosEnSesion {
   }
 
   public async Task Invoke(HttpContext context){
-    bool requestVaALogin = context.Request.Path.StartsWithSegments("/Usuario/Login");
+    bool requestVaALogin = context.Request.Path.StartsWithSegments("/usuarios/login");
+    bool requestVaARegistrarse = context.Request.Path.StartsWithSegments("/usuarios/nuevo");
     bool noHayDatosDeSesion =
       context.Session.GetString("NombreDeUsuario")  == null ||
       context.Session.GetString("Rol")              == null ||
       context.Session.GetInt32("UsuarioId")         == null;
 
-    if (!requestVaALogin) {
+    if (!requestVaALogin && !requestVaARegistrarse) {
       if (noHayDatosDeSesion) {
-        context.Response.Redirect("/Usuario/Login");
+        context.Response.Redirect("/usuarios/login");
         return;
       }
     }

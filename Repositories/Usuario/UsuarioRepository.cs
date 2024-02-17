@@ -25,6 +25,14 @@ public class UsuarioRepository: IUsuarioRepository {
     return EjecutaQueryReaderUsuarios(query)[0];
   }
 
+  public Usuario GetUsuario(string nombreDeUsuario) {
+    String query = String.Format(
+      "SELECT * FROM usuarios WHERE nombreDeUsuario = '{0}';",
+      nombreDeUsuario
+    );
+    return EjecutaQueryReaderUsuarios(query)[0];
+  }
+
   public List<Usuario> GetMiembrosDeTablero(int idTablero) {
     string query = string.Format(
       "SELECT usuarios.* FROM usuarios, usuarioTablero WHERE usuarioTablero.usuarioId = usuarios.id AND usuarioTablero.tableroId = {0};",
@@ -43,7 +51,12 @@ public class UsuarioRepository: IUsuarioRepository {
   }
 
   public void CrearUsuario(Usuario usuario) {
-    String query = String.Format(
+    Usuario usuarioExistente = GetUsuario(usuario.NombreDeUsario);
+    if (usuarioExistente != null) {
+      throw new Exception("Ya existe un usuario con ese nombre de usuario");
+    }
+
+    string query = String.Format(
       "INSERT INTO usuarios (nombreDeUsuario, rol, contrasenia) VALUES ('{0}', {1}, '{2}');",
       usuario.NombreDeUsario,
       (int) usuario.Rol,

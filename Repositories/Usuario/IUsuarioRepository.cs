@@ -9,6 +9,7 @@ public interface IUsuarioRepository {
   List<Usuario> GetMiembrosDeTablero(int idTablero);
   List<Usuario> GetCandidatosAMiembrosDeTablero(int idTablero, string busqueda);
   Usuario GetUsuario(int id);
+  Usuario GetUsuario(string nombreDeUsuario);
   void EliminarUsuario(int id);
   Usuario Login(Usuario usuario);
 }

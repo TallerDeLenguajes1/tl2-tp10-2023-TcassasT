@@ -1,9 +1,11 @@
 using tl2_tp10_2023_TcassasT.Models;
 using Microsoft.AspNetCore.Mvc;
 using tl2_tp10_2023_TcassasT.Interfaces;
+using tl2_tp10_2023_TcassasT.ViewModels;
 
 namespace tl2_tp10_2023_TcassasT.Controllers;
 
+[Route("usuarios")]
 public class UsuarioController : Controller {
   private readonly ILogger<UsuarioController> _logger;
   private readonly IUsuarioRepository _usuarioRepository;
@@ -18,24 +20,35 @@ public class UsuarioController : Controller {
     return View(usuarios);
   }
 
-  [HttpGet]
+  [HttpGet("nuevo")]
   public IActionResult CrearUsuario() {
-    return View(new Usuario());
+    int? rol = HttpContext.Session.GetInt32("Rol");
+    CrearUsuarioViewModel crearUsuarioVM = new CrearUsuarioViewModel() {
+      EsAdministrador = rol.Equals((int) RolUsuario.ADMINISTRADOR),
+    };
+    return View(crearUsuarioVM);
   }
 
-  [HttpPost]
-  public IActionResult CrearUsuario(Usuario usuario) {
-    _usuarioRepository.CrearUsuario(usuario);
-    return RedirectToAction("GetUsuarios");
+  [HttpPost("nuevo")]
+  public IActionResult CrearUsuario(CrearUsuarioViewModel crearUsuarioVM) {
+    try {
+      _usuarioRepository.CrearUsuario(crearUsuarioVM.Usuario);
+    } catch(Exception e) {
+      crearUsuarioVM.TieneError = true;
+      crearUsuarioVM.ErrorMensaje = e.Message;
+      return View(crearUsuarioVM);
+    }
+
+    return RedirectToAction("Login");
   }
 
-  [HttpGet]
+  [HttpGet("modificar/{id}")]
   public IActionResult ModificarUsuario(int id) {
     Usuario usuario = _usuarioRepository.GetUsuario(id);
     return View(usuario);
   }
 
-  [HttpPost]
+  [HttpPost("modificar/{id}")]
   public IActionResult ModificarUsuario(int id, Usuario usuario) {
     _usuarioRepository.ModificarUsuario(id, usuario);
     return RedirectToAction("GetUsuarios");
@@ -46,12 +59,12 @@ public class UsuarioController : Controller {
     return RedirectToAction("GetUsuarios");
   }
 
-  [HttpGet]
+  [HttpGet("login")]
   public IActionResult Login() {
     return View(new Usuario());
   }
 
-  [HttpPost]
+  [HttpPost("login")]
   public IActionResult Login(Usuario usuario) {
     Usuario usuarioLogueado = _usuarioRepository.Login(usuario);
     if (usuarioLogueado.NombreDeUsario == null) {

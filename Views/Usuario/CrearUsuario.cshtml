@@ -1,22 +1,39 @@
+@{
+  ViewData["Title"] = "Registrar un usuario nuevo";
+}
+
+@using tl2_tp10_2023_TcassasT.ViewModels
 @using tl2_tp10_2023_TcassasT.Models
-@model Usuario
+@model CrearUsuarioViewModel
 
 <form asp-controller="Usuario" asp-action="CrearUsuario" method="post">
+  @if (Model.TieneError) {
+    <div class="alert alert-danger" role="alert">
+      <strong>Hubo un error al crear un nuevo usuario</strong>
+      @if (Model.ErrorMensaje != "") {
+        <p class="mb-0">Error: @Model.ErrorMensaje</p>
+      }
+    </div>
+  }
+
+  <h2 class="mb-3">Registrar un usuario nuevo</h2>
   <div class="mb-3">
     <label class="form-label">Nombre de usuario</label>
-    <input type="text" class="form-control" asp-for="NombreDeUsario">
+    <input type="text" class="form-control" asp-for="Usuario.NombreDeUsario" value="@Model.Usuario.NombreDeUsario">
   </div>
-  <div class="mb-3">
+  @if (@Model.EsAdministrador) {
+    <div class="mb-3">
     <label class="form-label">Rol</label>
-    <select class="form-select" asp-for="Rol">
-      <option selected>Selecione un rol</option>
-      <option value="0">Administrador</option>
-      <option value="1">Operador</option>
-    </select>
-  </div>
+      <select class="form-select" asp-for="Usuario.Rol">
+        @foreach (var rol in Enum.GetValues(typeof(RolUsuario))) {
+          <option value="@rol">@rol</option>
+        }
+      </select>
+    </div>
+  }
   <div class="mb-3">
     <label class="form-label">Contraseña</label>
-    <input type="password" class="form-control" asp-for="Contrasenia">
+    <input type="password" class="form-control" asp-for="Usuario.Contrasenia">
   </div>
   <button type="submit" class="btn btn-primary">Crear</button>
 </form>
