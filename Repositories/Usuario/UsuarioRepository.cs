@@ -122,7 +122,7 @@ public class UsuarioRepository: IUsuarioRepository {
       throw new Exception("Usuario no encontrado");
     }
 
-    Usuario usuario = EjecutaQueryReaderUsuarios(query)[0];
+    Usuario usuario = usuariosResult[0];
 
     if (EncriptaContrasenia(login.Contrasenia).Equals(usuario.Contrasenia)) {
       return usuario;

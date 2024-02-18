@@ -2,18 +2,29 @@
   ViewData["Title"] = "Iniciar sesión";
 }
 
-@using tl2_tp10_2023_TcassasT.Models
-@model Usuario
+@using tl2_tp10_2023_TcassasT.ViewModels
+@model LoginViewModel
 
 <form asp-controller="Usuario" asp-action="Login" method="post">
+  @if (Model.TieneError) {
+    <div class="alert alert-danger" role="alert">
+      <strong>Hubo un error al iniciar sesión</strong>
+      @if (Model.ErrorMensaje != "") {
+        <p class="mb-0">Error: @Model.ErrorMensaje</p>
+      }
+    </div>
+  }
+
   <h2 class="mb-3">Iniciar sesión</h2>
   <div class="mb-3">
     <label class="form-label">Nombre de usuario</label>
-    <input type="text" class="form-control" asp-for="NombreDeUsario">
+    <input type="text" class="form-control" asp-for="NombreDeUsuario">
+    <span asp-validation-for="@Model.NombreDeUsuario" class="text-danger"></span>
   </div>
   <div class="mb-3">
     <label class="form-label">Contraseña</label>
     <input type="password" class="form-control" asp-for="Contrasenia">
+    <span asp-validation-for="@Model.Contrasenia" class="text-danger"></span>
   </div>
   <button type="submit" class="btn btn-primary">Iniciar sesión</button>
   <div class="text-center">
@@ -21,3 +32,5 @@
     <p>¿Aún no tienes una cuenta registrada?, <a asp-controller="Usuario" asp-action="CrearUsuario">registrate aquí</a></p>
   </div>
 </form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

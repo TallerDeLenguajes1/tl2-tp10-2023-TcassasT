@@ -61,20 +61,34 @@ public class UsuarioController : Controller {
 
   [HttpGet("login")]
   public IActionResult Login() {
-    return View(new Usuario());
+    LoginViewModel loginVM = new LoginViewModel();
+    return View(loginVM);
   }
 
   [HttpPost("login")]
-  public IActionResult Login(Usuario usuario) {
-    Usuario usuarioLogueado = _usuarioRepository.Login(usuario);
-    if (usuarioLogueado.NombreDeUsario == null) {
-      throw new Exception("No se puede loguear usuario");
+  public IActionResult Login(LoginViewModel loginViewModel) {
+    try {
+      if (!ModelState.IsValid) {
+        loginViewModel.TieneError = true;
+        loginViewModel.ErrorMensaje = "Datos invalidos, por favor reintente";
+        return View(loginViewModel);
+      }
+
+      Usuario usuarioLogueado = _usuarioRepository.Login(new Usuario(loginViewModel));
+
+      if (usuarioLogueado.NombreDeUsario == null) {
+        throw new Exception("No se puede loguear usuario");
+      }
+
+      HttpContext.Session.SetInt32("UsuarioId", usuarioLogueado.Id);
+      HttpContext.Session.SetString("NombreDeUsuario", usuarioLogueado.NombreDeUsario);
+      HttpContext.Session.SetInt32("Rol", (int) usuarioLogueado.Rol);
+
+      return RedirectToAction("Index", "Home");
+    } catch (Exception e) {
+      loginViewModel.TieneError = true;
+      loginViewModel.ErrorMensaje = e.Message;
+      return View(loginViewModel);
     }
-
-    HttpContext.Session.SetInt32("UsuarioId", usuarioLogueado.Id);
-    HttpContext.Session.SetString("NombreDeUsuario", usuarioLogueado.NombreDeUsario);
-    HttpContext.Session.SetInt32("Rol", (int) usuarioLogueado.Rol);
-
-    return RedirectToAction("Index", "Home");
   }
 }

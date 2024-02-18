@@ -24,4 +24,9 @@ public class Usuario {
     this.contrasenia = usuarioViewModel.Contrasenia;
     this.rol = usuarioViewModel.Rol;
   }
+
+  public Usuario(LoginViewModel loginViewModel) {
+    this.nombreDeUsuario = loginViewModel.NombreDeUsuario;
+    this.contrasenia = loginViewModel.Contrasenia;
+  }
 }
