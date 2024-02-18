@@ -1,3 +1,5 @@
+using tl2_tp10_2023_TcassasT.ViewModels;
+
 namespace tl2_tp10_2023_TcassasT.Models;
 
 public enum RolUsuario {
@@ -15,4 +17,11 @@ public class Usuario {
   public String? NombreDeUsario { get => nombreDeUsuario; set => nombreDeUsuario = value; }
   public RolUsuario Rol { get => rol; set => rol = value; }
   public String? Contrasenia { get => contrasenia; set => contrasenia = value; }
+
+  public Usuario() {}
+  public Usuario(CrearUsuarioViewModel usuarioViewModel) {
+    this.nombreDeUsuario = usuarioViewModel.NombreDeUsuario;
+    this.contrasenia = usuarioViewModel.Contrasenia;
+    this.rol = usuarioViewModel.Rol;
+  }
 }

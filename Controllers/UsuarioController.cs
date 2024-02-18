@@ -32,7 +32,7 @@ public class UsuarioController : Controller {
   [HttpPost("nuevo")]
   public IActionResult CrearUsuario(CrearUsuarioViewModel crearUsuarioVM) {
     try {
-      _usuarioRepository.CrearUsuario(crearUsuarioVM.Usuario);
+      _usuarioRepository.CrearUsuario(new Usuario(crearUsuarioVM));
     } catch(Exception e) {
       crearUsuarioVM.TieneError = true;
       crearUsuarioVM.ErrorMensaje = e.Message;

@@ -17,20 +17,32 @@ public class UsuarioRepository: IUsuarioRepository {
     return EjecutaQueryReaderUsuarios("SELECT * FROM usuarios;");
   }
 
-  public Usuario GetUsuario(int id) {
-    String query = String.Format(
+  public Usuario? GetUsuario(int id) {
+    string query = string.Format(
       "SELECT * FROM usuarios WHERE id = {0};",
       id
     );
-    return EjecutaQueryReaderUsuarios(query)[0];
+
+    List<Usuario> usuariosResult = EjecutaQueryReaderUsuarios(query);
+    if (usuariosResult.Count == 0) {
+      return null;
+    }
+
+    return usuariosResult[0];
   }
 
-  public Usuario GetUsuario(string nombreDeUsuario) {
-    String query = String.Format(
+  public Usuario? GetUsuario(string nombreDeUsuario) {
+    string query = string.Format(
       "SELECT * FROM usuarios WHERE nombreDeUsuario = '{0}';",
       nombreDeUsuario
     );
-    return EjecutaQueryReaderUsuarios(query)[0];
+
+    List<Usuario> usuariosResult = EjecutaQueryReaderUsuarios(query);
+    if (usuariosResult.Count == 0) {
+      return null;
+    }
+
+    return usuariosResult[0];
   }
 
   public List<Usuario> GetMiembrosDeTablero(int idTablero) {
@@ -51,7 +63,8 @@ public class UsuarioRepository: IUsuarioRepository {
   }
 
   public void CrearUsuario(Usuario usuario) {
-    Usuario usuarioExistente = GetUsuario(usuario.NombreDeUsario);
+    Usuario? usuarioExistente = GetUsuario(usuario.NombreDeUsario);
+
     if (usuarioExistente != null) {
       throw new Exception("Ya existe un usuario con ese nombre de usuario");
     }
@@ -62,6 +75,7 @@ public class UsuarioRepository: IUsuarioRepository {
       (int) usuario.Rol,
       EncriptaContrasenia(usuario.Contrasenia)
     );
+
     EjecutaNonQueryUsuarios(query);
   }
 
@@ -102,11 +116,13 @@ public class UsuarioRepository: IUsuarioRepository {
       @"SELECT * FROM usuarios WHERE nombreDeUsuario = '{0}'",
       login.NombreDeUsario
     );
-    Usuario usuario = EjecutaQueryReaderUsuarios(query)[0];
 
-    if (usuario == null) {
+    List<Usuario> usuariosResult = EjecutaQueryReaderUsuarios(query);
+    if (usuariosResult.Count == 0) {
       throw new Exception("Usuario no encontrado");
     }
+
+    Usuario usuario = EjecutaQueryReaderUsuarios(query)[0];
 
     if (EncriptaContrasenia(login.Contrasenia).Equals(usuario.Contrasenia)) {
       return usuario;
