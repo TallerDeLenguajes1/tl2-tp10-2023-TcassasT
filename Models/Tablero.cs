@@ -1,3 +1,5 @@
+using tl2_tp10_2023_TcassasT.ViewModels;
+
 namespace tl2_tp10_2023_TcassasT.Models;
 
 public class Tablero {
@@ -10,6 +12,20 @@ public class Tablero {
   public int IdUsuarioPropietario { get => idUsuarioPropietario; set => idUsuarioPropietario = value; }
   public String? Nombre { get => nombre; set => nombre = value; }
   public String? Descripcion { get => descripcion; set => descripcion = value; }
+
+  public Tablero() {}
+  public Tablero(CrearTableroViewModel crearTableroVM) {
+    this.IdUsuarioPropietario = crearTableroVM.IdUsuarioPropietario;
+    this.Nombre = crearTableroVM.Nombre;
+    this.Descripcion = crearTableroVM.Descripcion;
+  }
+
+  public Tablero(ModificarTableroViewModel modificarTableroVM) {
+    this.Id = modificarTableroVM.Id;
+    this.IdUsuarioPropietario = modificarTableroVM.IdUsuarioPropietario;
+    this.Nombre = modificarTableroVM.Nombre;
+    this.Descripcion = modificarTableroVM.Descripcion;
+  }
 }
 
 public class TableroExtendido : Tablero {

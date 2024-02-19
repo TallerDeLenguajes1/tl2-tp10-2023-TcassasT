@@ -19,12 +19,18 @@ public class TableroRepository: ITableroReposiroty {
     return EjecutaQueryReaderTableros(query);
   }
 
-  public Tablero GetTablero(int id){
+  public Tablero? GetTablero(int id){
     String query = String.Format(
       "SELECT * FROM tableros WHERE id = {0};",
       id
     );
-    return EjecutaQueryReaderTableros(query)[0];
+    List<Tablero> tableros = EjecutaQueryReaderTableros(query);
+
+    if (tableros.Count == 0) {
+      return null;
+    }
+
+    return tableros[0];
   }
 
   public List<Tablero> GetTablerosByUserId(int id) {

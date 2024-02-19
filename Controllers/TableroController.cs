@@ -23,7 +23,7 @@ public class TableroController: Controller {
   }
 
   [HttpGet("")]
-  public IActionResult GetTableros() {
+  public IActionResult GetTableros(EstatsuGenericoViewModel estatusGenericoVM) {
     int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
 
     if (usuarioLogueado == null) {
@@ -38,52 +38,106 @@ public class TableroController: Controller {
 
     List<TableroMembrecias> tablerosConMiembros = _tableroReposiroty.GetTablerosMembreciasByTableroId(tablerosPertenecientes);
 
-    return View(tablerosConMiembros);
+    GetTablerosViewModel getTablerosVM = new GetTablerosViewModel() {
+      Tableros = tablerosConMiembros,
+      Estatus = estatusGenericoVM
+    };
+
+    return View(getTablerosVM);
   }
 
   [HttpGet("nuevo")]
   public IActionResult CrearTablero() {
+    CrearTableroViewModel crearTableroVM = new CrearTableroViewModel();
     int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
 
     if (usuarioLogueado == null) {
-      throw new Exception("No existe sesion para identificar usuario creador");
+      crearTableroVM.TieneError = true;
+      crearTableroVM.ErrorMensaje = "No existe usuario para identificar como usuario creador";
+      return View(crearTableroVM);
     }
 
-    Tablero tablero = new Tablero() { IdUsuarioPropietario = (int) usuarioLogueado };
+    crearTableroVM.IdUsuarioPropietario = (int) usuarioLogueado;
 
-    return View(tablero);
+    return View(crearTableroVM);
   }
 
   [HttpPost("nuevo")]
-  public IActionResult CrearTablero(Tablero tablero) {
-    int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
-
-    if (usuarioLogueado == null) {
-      throw new Exception("No existe sesion para identificar usuario creador");
+  public IActionResult CrearTablero(CrearTableroViewModel crearTableroVM) {
+    if (!ModelState.IsValid) {
+      crearTableroVM.TieneError = true;
+      crearTableroVM.ErrorMensaje = "Datos invalidos, por favor reintente";
+      return View(crearTableroVM);
     }
 
+    Tablero tablero = new Tablero(crearTableroVM);
     int tableroId = _tableroReposiroty.CrearTablero(tablero);
-    _usuarioTableroRepository.AgregarUsuarioATablero((int) usuarioLogueado, tableroId);
+    _usuarioTableroRepository.AgregarUsuarioATablero(tablero.IdUsuarioPropietario, tableroId);
+
+    EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel() {
+      TieneEstatus = true,
+      Severidad = ESTATUS_SEVERIDAD.SUCCESS,
+      EstatusMensaje = "Tablero creado con éxito"
+    };
     
-    return RedirectToAction("GetTableros");
+    return RedirectToAction("GetTableros", estatusGenericoVM);
   }
 
   [HttpGet("{id}/modificar")]
   public IActionResult ModificarTablero(int id) {
+    EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel();
     Tablero tablero = _tableroReposiroty.GetTablero(id);
-    return View(tablero);
+
+    if (tablero == null) {
+      estatusGenericoVM.TieneEstatus = true;
+      estatusGenericoVM.Severidad = ESTATUS_SEVERIDAD.ERROR;
+      estatusGenericoVM.EstatusMensaje = "No se encontró tablero para modificar";
+      return RedirectToAction("GetTableros", estatusGenericoVM);
+    }
+
+    ModificarTableroViewModel modificarTableroVM = new ModificarTableroViewModel(tablero);
+
+    return View(modificarTableroVM);
   }
 
   [HttpPost("{id}/modificar")]
-  public IActionResult ModificarTablero(int id, Tablero tablero) {
-    _tableroReposiroty.ModificarTablero(id, tablero);
-    return RedirectToAction("GetTableros");
+  public IActionResult ModificarTablero(int id, ModificarTableroViewModel modificarTableroVM) {
+    if (!ModelState.IsValid) {
+      modificarTableroVM.TieneError = true;
+      modificarTableroVM.ErrorMensaje = "Datos invalidos, por favor reintente";
+      return View(modificarTableroVM);
+    }
+
+    _tableroReposiroty.ModificarTablero(id, new Tablero(modificarTableroVM));
+
+    EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel() {
+      TieneEstatus = true,
+      Severidad = ESTATUS_SEVERIDAD.SUCCESS,
+      EstatusMensaje = "Tablero modificado con éxito"
+    };
+
+    return RedirectToAction("GetTableros", estatusGenericoVM);
   }
 
   [HttpGet("{id}/eliminar")]
   public IActionResult EliminarTablero(int id) {
+    EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel();
+    Tablero tablero = _tableroReposiroty.GetTablero(id);
+
+    if (tablero == null) {
+      estatusGenericoVM.TieneEstatus = true;
+      estatusGenericoVM.Severidad = ESTATUS_SEVERIDAD.ERROR;
+      estatusGenericoVM.EstatusMensaje = "No se encontró tablero para eliminar";
+      return RedirectToAction("GetTableros", estatusGenericoVM);
+    }
+
     _tableroReposiroty.EliminarTablero(id);
-    return RedirectToAction("GetTableros");
+
+    estatusGenericoVM.TieneEstatus = true;
+    estatusGenericoVM.Severidad = ESTATUS_SEVERIDAD.SUCCESS;
+    estatusGenericoVM.EstatusMensaje = "Tablero eliminado con éxito";
+
+    return RedirectToAction("GetTableros", estatusGenericoVM);
   }
 
   // Tareas

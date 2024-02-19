@@ -4,7 +4,7 @@ namespace tl2_tp10_2023_TcassasT.Interfaces;
 
 public interface ITableroReposiroty {
   List<Tablero> GetTableros();
-  Tablero GetTablero(int id);
+  Tablero? GetTablero(int id);
   List<Tablero> GetTablerosByUserId(int id);
   List<Tablero> GetTablerosByTableroId(List<int> tablerosId);
   List<TableroExtendido> GetTablerosExtendidosByTableroId(List<int> tablerosId);

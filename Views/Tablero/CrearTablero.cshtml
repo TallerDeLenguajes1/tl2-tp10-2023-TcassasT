@@ -2,21 +2,32 @@
   ViewData["Title"] = "Crear un tablero nuevo";
 }
 
-@using tl2_tp10_2023_TcassasT.Models
-@model Tablero
+@using tl2_tp10_2023_TcassasT.ViewModels
+@model CrearTableroViewModel
 
 <form asp-controller="Tablero" asp-action="CrearTablero" method="post">
+  @if (Model.TieneError) {
+    <div class="alert alert-danger" role="alert">
+      <strong>Hubo un error al crear un nuevo usuario</strong>
+      @if (Model.ErrorMensaje != "") {
+        <p class="mb-0">Error: @Model.ErrorMensaje</p>
+      }
+    </div>
+  }
+
   <h2 class="mb-3">Crear un tablero nuevo</h2>
   <div class="mb-3">
     <label class="form-label">Nombre</label>
-    <input type="text" class="form-control" asp-for="Nombre">
+    <input type="text" class="form-control" asp-for="Nombre" value="@Model.Nombre">
+    <span asp-validation-for="@Model.Nombre" class="text-danger"></span>
   </div>
   <div class="mb-3">
     <label class="form-label">Descripcion</label>
-    <textarea class="form-control" asp-for="Descripcion"></textarea>
+    <textarea class="form-control" asp-for="Descripcion">@(string.IsNullOrEmpty(Model.Descripcion) ? Model.Descripcion : null)</textarea>
+    <span asp-validation-for="@Model.Descripcion" class="text-danger"></span>
   </div>
-  
   <input type="text" class="form-control" asp-for="IdUsuarioPropietario" value=@Model.IdUsuarioPropietario hidden>
-
   <button type="submit" class="btn btn-primary">Crear</button>
 </form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
