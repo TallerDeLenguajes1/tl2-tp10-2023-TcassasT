@@ -82,7 +82,7 @@ public class TareaRepository: ITareaRepository {
 
   public List<TareaArchivada> GetTareasArchivadasByTableroId(int idTablero) {
     string query = String.Format(
-      "SELECT t.*, a.fecha FROM tareas t LEFT JOIN ( SELECT tareaId, MAX(id) AS max_id, fecha FROM actividad WHERE actividadTexto = 'Tarea archivada' GROUP BY tareaId ) a ON t.id = a.tareaId WHERE t.archivada = 1 AND t.id = a.tareaId AND t.idTablero = {0} ORDER BY a.fecha DESC",
+      "SELECT t.*, a.fecha, u.nombreDeUsuario FROM tareas t LEFT JOIN ( SELECT tareaId, MAX(id) AS max_id, usuarioId, fecha FROM actividad WHERE actividadTexto = 'Tarea archivada' GROUP BY tareaId ) a ON t.id = a.tareaId, usuarios u WHERE t.archivada = 1 AND a.usuarioId = u.id AND t.id = a.tareaId AND t.idTablero = {0} ORDER BY a.fecha DESC",
       idTablero
     );
     return EjecutaQueryReaderTareasArchivadas(query);
@@ -153,6 +153,7 @@ public class TareaRepository: ITareaRepository {
           tarea.IdTablero = Convert.ToInt32(reader[6]);
           tarea.Archivada = (ArchivadoTarea) Convert.ToInt32(reader[7]);
           tarea.ArchivadaFecha = reader[8].ToString();
+          tarea.ArchivadaPorUsuario = reader[9].ToString();
 
           tareas.Add(tarea);
         }

@@ -26,13 +26,21 @@ public class TableroController: Controller {
   [HttpGet("")]
   public IActionResult GetTableros(EstatsuGenericoViewModel estatusGenericoVM) {
     int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
+    int? rolId = HttpContext.Session.GetInt32("Rol");
 
     if (usuarioLogueado == null) {
       throw new Exception("No existe sesion para identificar usuario creador");
     }
 
     List<int> tablerosPertenecientes = new List<int>();
-    List<Tablero> tableros = _tableroReposiroty.GetTablerosByUserId((int) usuarioLogueado);
+    List<Tablero> tableros = new List<Tablero>();
+
+    if ((int) rolId == (int) RolUsuario.ADMINISTRADOR) {
+      tableros = _tableroReposiroty.GetTableros();
+    } else {
+      tableros = _tableroReposiroty.GetTablerosByUserId((int) usuarioLogueado);
+    }
+
     tableros.ForEach((Tablero tablero) => {
       tablerosPertenecientes.Add(tablero.Id);
     });
@@ -86,6 +94,11 @@ public class TableroController: Controller {
 
   [HttpGet("{id}/modificar")]
   public IActionResult ModificarTablero(int id) {
+    if (NoTienePermisoParaOperarEnTablero(id)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para ver este contenido");
+      return RedirectToAction("Index", "Home");
+    }
+
     EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel();
     Tablero tablero = _tableroReposiroty.GetTablero(id);
 
@@ -103,6 +116,11 @@ public class TableroController: Controller {
 
   [HttpPost("{id}/modificar")]
   public IActionResult ModificarTablero(int id, ModificarTableroViewModel modificarTableroVM) {
+    if (NoTienePermisoParaOperarEnTablero(id)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para realizar esta acción");
+      return RedirectToAction("Index", "Home");
+    }
+
     if (!ModelState.IsValid) {
       modificarTableroVM.TieneError = true;
       modificarTableroVM.ErrorMensaje = "Datos invalidos, por favor reintente";
@@ -122,6 +140,11 @@ public class TableroController: Controller {
 
   [HttpGet("{id}/eliminar")]
   public IActionResult EliminarTablero(int id) {
+    if (NoTienePermisoParaOperarEnTablero(id)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para ver este contenido");
+      return RedirectToAction("Index", "Home");
+    }
+
     EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel();
     Tablero tablero = _tableroReposiroty.GetTablero(id);
 
@@ -144,6 +167,18 @@ public class TableroController: Controller {
   // Tareas
   [HttpGet("{idTablero}/tareas")]
   public ActionResult GetTareasByTableroId(int idTablero) {
+    int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
+    int? rolId = HttpContext.Session.GetInt32("Rol");
+    if (usuarioLogueado == null) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe usuario verificar membresia");
+      return RedirectToAction("Index", "Home");
+    }
+
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para ver este contenido");
+      return RedirectToAction("Index", "Home");
+    }
+
     GetTareasByTableroIdViewModel vm = new GetTareasByTableroIdViewModel();
 
     Tablero tablero = _tableroReposiroty.GetTablero(idTablero);
@@ -165,6 +200,11 @@ public class TableroController: Controller {
 
   [HttpGet("{idTablero}/tareas/nueva")]
   public ActionResult CrearTarea(int idTablero) {
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para ver este contenido");
+      return RedirectToAction("Index", "Home");
+    }
+
     EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel();
     int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
 
@@ -184,6 +224,11 @@ public class TableroController: Controller {
 
   [HttpPost("{idTablero}/tareas/nueva")]
   public IActionResult CrearTarea(int idTablero, CrearTareaViewModel crearTareaVM) {
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para realizar esta acción");
+      return RedirectToAction("Index", "Home");
+    }
+
     if (!ModelState.IsValid) {
       crearTareaVM.TieneError = true;
       crearTareaVM.ErrorMensaje = "Datos invalidos, por favor reintente";
@@ -199,6 +244,11 @@ public class TableroController: Controller {
 
   [HttpPost("{idTablero}/tareas/{idTarea}/archivar")]
   public IActionResult ArchivarTarea(int idTablero, int idTarea, ArchivadoTarea archivado) {
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para realizar esta acción");
+      return RedirectToAction("Index", "Home");
+    }
+
     EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel();
     int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
 
@@ -223,6 +273,11 @@ public class TableroController: Controller {
 
   [HttpGet("{idTablero}/tareas/{idTarea}/modificar")]
   public IActionResult ModificarTarea(int idTablero, int idTarea) {
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para ver este contenido");
+      return RedirectToAction("Index", "Home");
+    }
+
     EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel();
     Tarea tareaAModificar = _tareaRepository.GetTarea(idTarea);
     if (tareaAModificar == null) {
@@ -237,6 +292,11 @@ public class TableroController: Controller {
 
   [HttpPost("{idTablero}/tareas/{idTarea}/modificar")]
   public IActionResult ModificarTarea(int idTablero, int idTarea, ModificarTareaViewModel modificarTareaVM) {
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para realizar esta accion");
+      return RedirectToAction("Index", "Home");
+    }
+
     EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel();
     int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
 
@@ -267,6 +327,11 @@ public class TableroController: Controller {
 
   [HttpPost("{idTablero}/tareas/{idTarea}/modificar/estado")]
   public IActionResult ModificarEstadoTarea(int idTablero, int idTarea, EstadoTarea estado) {
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para realizar esta acción");
+      return RedirectToAction("Index", "Home");
+    }
+
     EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel();
     int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
 
@@ -289,6 +354,11 @@ public class TableroController: Controller {
 
   [HttpGet("{idTablero}/tareas/{idTarea}/eliminar")]
   public IActionResult EliminarTarea(int idTablero, int idTarea) {
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para ver este contenido");
+      return RedirectToAction("Index", "Home");
+    }
+
     Tarea tarea = _tareaRepository.GetTarea(idTarea);
     if (tarea == null) {
       AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe tarea para eliminar");
@@ -301,6 +371,11 @@ public class TableroController: Controller {
 
   [HttpGet("{idTablero}/tareas/archivadas")]
   public IActionResult GetTareasArchivadasByTableroId(int idTablero) {
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para ver este contenido");
+      return RedirectToAction("Index", "Home");
+    }
+
     Tablero tablero = _tableroReposiroty.GetTablero(idTablero);
     List<TareaArchivada> tareas = _tareaRepository.GetTareasArchivadasByTableroId(idTablero);
 
@@ -313,12 +388,22 @@ public class TableroController: Controller {
 
   [HttpGet("{idTablero}/tareas/{idTarea}/actividad")]
   public ICollection<ActividadExtendida> GetActividadByTareaId(int idTablero, int idTarea) {
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para ver este contenido");
+      return new List<ActividadExtendida>();
+    }
+
     List<ActividadExtendida> actividades = _actividadRepository.GetActividadesByTareaId(idTarea);
     return actividades;
   }
 
   [HttpGet("{idTablero}/actividad")]
   public IActionResult GetActividadByTableroId(int idTablero) {
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para ver este contenido");
+      return RedirectToAction("Index", "Home");
+    }
+
     Tablero tablero = _tableroReposiroty.GetTablero(idTablero);
     List<ActividadExtendida> actividades = _actividadRepository.GetActividadesByTableroId(idTablero);
     
@@ -331,6 +416,11 @@ public class TableroController: Controller {
 
   [HttpGet("{idTablero}/miembros")]
   public IActionResult GetMiembrosByTableroId(int idTablero) {
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para ver este contenido");
+      return RedirectToAction("Index", "Home");
+    }
+
     int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
     int? usuarioRol = HttpContext.Session.GetInt32("Rol");
 
@@ -361,12 +451,22 @@ public class TableroController: Controller {
 
   [HttpGet("{idTablero}/miembros/candidatos")]
   public ICollection<Usuario> GetCandidatosAMiembrosByTableroId(int idTablero, string busqueda) {
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para ver este contenido");
+      return new List<Usuario>();
+    }
+
     List<Usuario> candidatos = _usuarioRepository.GetCandidatosAMiembrosDeTablero(idTablero, busqueda);
     return candidatos;
   }
 
   [HttpPost("{idTablero}/miembros/agregar")]
   public IActionResult AgregarMiembroATablero(int idTablero, int idUsuario) {
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para realizar esta acción");
+      return RedirectToAction("Index", "Home");
+    }
+
     Usuario usuario = _usuarioRepository.GetUsuario(idUsuario);
     if (usuario == null) {
       AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe usuario para agregar a tablero");
@@ -393,6 +493,11 @@ public class TableroController: Controller {
 
   [HttpPost("{idTablero}/miembros/remover")]
   public IActionResult RemoverMiembroDeTablero(int idTablero, int idUsuario) {
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para realizar esta acción");
+      return RedirectToAction("Index", "Home");
+    }
+
     if (!_usuarioTableroRepository.UsuarioPerteneceATablero(idUsuario, idTablero)) {
       AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "Usuario ya pertenece a este tablero");
       return RedirectToAction("GetMiembrosByTableroId", new { idTablero });
@@ -407,6 +512,11 @@ public class TableroController: Controller {
 
   [HttpPost("{idTablero}/miembros/propietario")]
   public IActionResult OtorgarPropiedadTablero(int idTablero, int idUsuario) {
+    if (NoTienePermisoParaOperarEnTablero(idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No tienes permiso para realizar esta acción");
+      return RedirectToAction("Index", "Home");
+    }
+
     Tablero tablero = _tableroReposiroty.GetTablero(idTablero);
 
     Usuario nuevoUsuario = _usuarioRepository.GetUsuario(idUsuario);
@@ -435,5 +545,12 @@ public class TableroController: Controller {
     estatusGenericoVM.Severidad = severidad;
     estatusGenericoVM.EstatusMensaje = mensaje;
     TempData.Put("Estatus", estatusGenericoVM);
+  }
+
+  public bool NoTienePermisoParaOperarEnTablero(int idTablero) {
+    int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
+    int? rolId = HttpContext.Session.GetInt32("Rol");
+    return !_usuarioTableroRepository.UsuarioPerteneceATablero((int) usuarioLogueado, idTablero) &&
+      (rolId == null || (int) rolId != (int) RolUsuario.ADMINISTRADOR);
   }
 }

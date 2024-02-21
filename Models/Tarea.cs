@@ -58,4 +58,5 @@ public class Tarea {
 public class TareaArchivada : Tarea {
   private string? archivadaFecha;
   public string? ArchivadaFecha { get => archivadaFecha; set => archivadaFecha = value; }
+  public string? ArchivadaPorUsuario { get; set; }
 }
