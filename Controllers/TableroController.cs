@@ -241,8 +241,9 @@ public class TableroController: Controller {
     int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
 
     if (!ModelState.IsValid) {
-      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "Valores invalidos por favor reintente");
-      return View(new { idTablero, idTarea, modificarTareaVM });
+      modificarTareaVM.TieneError = true;
+      modificarTareaVM.ErrorMensaje = "Datos invalidos, por favor reintente";
+      return View(modificarTareaVM);
     }
 
     Tarea tarea = _tareaRepository.GetTarea(idTarea);

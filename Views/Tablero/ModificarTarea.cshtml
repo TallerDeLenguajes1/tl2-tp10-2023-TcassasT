@@ -7,6 +7,15 @@
 @model ModificarTareaViewModel
 
 <form asp-controller="Tablero" asp-action="ModificarTarea" asp-route-idTablero=@Model.IdTablero asp-route-idTarea=@Model.Id method="post">
+  @if (Model.TieneError) {
+    <div class="alert alert-danger" role="alert">
+      <strong>Hubo un error al modificar la tarea</strong>
+      @if (Model.ErrorMensaje != "") {
+        <p class="mb-0">Error: @Model.ErrorMensaje</p>
+      }
+    </div>
+  }
+
   <h2 class="mb-3">Modificar tablero: @Model.Nombre</h2> 
   <div class="mb-3">
     <label class="form-label">Nombre de tarea</label>
