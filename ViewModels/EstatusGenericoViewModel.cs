@@ -6,6 +6,7 @@ public enum ESTATUS_SEVERIDAD {
   SUCCESS
 }
 
+[Serializable]
 public class EstatsuGenericoViewModel {
   public ESTATUS_SEVERIDAD Severidad { get; set; }
   public string EstatusMensaje { get; set; }

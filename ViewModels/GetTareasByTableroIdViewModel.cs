@@ -6,6 +6,7 @@ public class GetTareasByTableroIdViewModel {
   public Tablero Tablero { get; set; }
   public int CantidadDeTareas { get; set; }
   public Dictionary<EstadoTarea, List<Tarea>> TareasPorEstado { get; set; }
+  public EstatsuGenericoViewModel? Estatus { get; set; }
 
   public GetTareasByTableroIdViewModel() {
     Tablero = new Tablero();

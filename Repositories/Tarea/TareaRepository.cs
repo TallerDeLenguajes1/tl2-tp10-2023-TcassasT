@@ -41,12 +41,19 @@ public class TareaRepository: ITareaRepository {
     );
   }
 
-  public Tarea GetTarea(int idTarea) {
+  public Tarea? GetTarea(int idTarea) {
     String query = String.Format(
       "SELECT * FROM tareas WHERE id = {0};",
       idTarea
     );
-    return EjecutaQueryReaderTareas(query)[0];
+    
+    List<Tarea> tareas = EjecutaQueryReaderTareas(query);
+
+    if (tareas.Count == 0) {
+      return null;
+    }
+
+    return tareas[0];
   }
 
   public List<Tarea> GetTareasByUsuarioId(int idUsuario) {

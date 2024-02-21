@@ -1,3 +1,5 @@
+using tl2_tp10_2023_TcassasT.ViewModels;
+
 namespace tl2_tp10_2023_TcassasT.Models;
 
 public enum EstadoTarea {
@@ -31,6 +33,26 @@ public class Tarea {
   public int? IdUsuarioAsignado { get => idUsuarioAsignado; set => idUsuarioAsignado = value; }
   public int IdTablero { get => idTablero; set => idTablero = value; }
   public ArchivadoTarea Archivada { get => archivada; set => archivada = value; }
+
+  public Tarea() {}
+  public Tarea(CrearTareaViewModel crearTareaVM) {
+    this.Nombre = crearTareaVM.Nombre;
+    this.Descripcion = crearTareaVM.Nombre;
+    this.Color = crearTareaVM.Color;
+    this.Estado = crearTareaVM.Estado;
+    this.IdUsuarioAsignado = crearTareaVM.IdUsuarioAsignado;
+    this.IdTablero = crearTareaVM.IdTablero;
+  }
+
+  public Tarea(ModificarTareaViewModel modificarTareaVM) {
+    this.Id = modificarTareaVM.Id;
+    this.Nombre = modificarTareaVM.Nombre;
+    this.Descripcion = modificarTareaVM.Nombre;
+    this.Color = modificarTareaVM.Color;
+    this.Estado = modificarTareaVM.Estado;
+    this.IdUsuarioAsignado = modificarTareaVM.IdUsuarioAsignado;
+    this.IdTablero = modificarTareaVM.IdTablero;
+  }
 }
 
 public class TareaArchivada : Tarea {

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using tl2_tp10_2023_TcassasT.Interfaces;
 using tl2_tp10_2023_TcassasT.Models;
 using tl2_tp10_2023_TcassasT.ViewModels;
+using tl2_tp10_2023_TcassasT.Utility;
 
 namespace tl2_tp10_2023_TcassasT.Controllers;
 
@@ -154,69 +155,146 @@ public class TableroController: Controller {
     vm.Tablero = tablero;
     vm.CantidadDeTareas = todasLasTareas.Count();
 
+    if (TempData.Get<EstatsuGenericoViewModel>("Estatus") != null) {
+      EstatsuGenericoViewModel estatusGenericoVM =  TempData.Get<EstatsuGenericoViewModel>("Estatus");
+      vm.Estatus =  estatusGenericoVM;
+    }
+
     return View(vm);
   }
 
   [HttpGet("{idTablero}/tareas/nueva")]
   public ActionResult CrearTarea(int idTablero) {
-    return View(new Tarea() { IdTablero = idTablero });
+    EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel();
+    int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
+
+    if (usuarioLogueado == null) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe usuario para identificar como usuario creador");
+      return RedirectToAction("GetTareasByTableroId", new { idTablero });
+    }
+
+    CrearTareaViewModel crearTareaVM = new CrearTareaViewModel();
+    crearTareaVM = new CrearTareaViewModel() {
+      IdTablero = idTablero,
+      IdUsuarioAsignado = (int) usuarioLogueado
+    };
+
+    return View(crearTareaVM);
   }
 
   [HttpPost("{idTablero}/tareas/nueva")]
-  public IActionResult CrearTarea(int idTablero, Tarea tarea) {
-    _tareaRepository.CrearTareaEnTablero(tarea);
+  public IActionResult CrearTarea(int idTablero, CrearTareaViewModel crearTareaVM) {
+    if (!ModelState.IsValid) {
+      crearTareaVM.TieneError = true;
+      crearTareaVM.ErrorMensaje = "Datos invalidos, por favor reintente";
+      return View(new { idTablero, crearTareaVM });
+    }
+
+    _tareaRepository.CrearTareaEnTablero(new Tarea(crearTareaVM));
+    
+    AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.SUCCESS, "Tarea creada con éxito");
+
     return RedirectToAction("GetTareasByTableroId", new { idTablero });
   }
 
   [HttpPost("{idTablero}/tareas/{idTarea}/archivar")]
   public IActionResult ArchivarTarea(int idTablero, int idTarea, ArchivadoTarea archivado) {
+    EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel();
     int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
 
     if (usuarioLogueado == null) {
-      throw new Exception("No existe sesion para identificar actividad de usuario");
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe usuario para identificar actividad");
+      return RedirectToAction("GetTareasByTableroId", new { idTablero });
+    }
+
+    Tarea tarea = _tareaRepository.GetTarea(idTarea);
+    if (tarea == null) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe tarea para archivar");
+      return RedirectToAction("GetTareasByTableroId", new { idTablero });
     }
 
     _actividadRepository.AgregarActividad((int) usuarioLogueado, idTablero, idTarea, (archivado.Equals(ArchivadoTarea.ARCHIVADO) ? "Tarea archivada" : "Tarea des-archivada"));
     _tareaRepository.ModificarArchivado(idTarea, archivado);
+
+    AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.SUCCESS, "Tarea archivada con éxito");
+
     return RedirectToAction("GetTareasByTableroId", new { idTablero });
   }
 
   [HttpGet("{idTablero}/tareas/{idTarea}/modificar")]
   public IActionResult ModificarTarea(int idTablero, int idTarea) {
+    EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel();
     Tarea tareaAModificar = _tareaRepository.GetTarea(idTarea);
+    if (tareaAModificar == null) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe tarea para archivar");
+      return RedirectToAction("GetTareasByTableroId", new { idTablero, estatusGenericoVM });
+    }
+
+    ModificarTareaViewModel modificarTareaViewModel = new ModificarTareaViewModel(tareaAModificar);
+
     return View(tareaAModificar);
   }
 
   [HttpPost("{idTablero}/tareas/{idTarea}/modificar")]
-  public IActionResult ModificarTarea(int idTablero, int idTarea, Tarea tarea) {
+  public IActionResult ModificarTarea(int idTablero, int idTarea, ModificarTareaViewModel modificarTareaVM) {
+    EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel();
     int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
 
-    if (usuarioLogueado == null) {
-      throw new Exception("No existe sesion para identificar actividad de usuario");
+    if (!ModelState.IsValid) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "Valores invalidos por favor reintente");
+      return RedirectToAction("GetTareasByTableroId", new { idTablero });
     }
 
-    _tareaRepository.ModificarTarea(idTarea, tarea);
+    Tarea tarea = _tareaRepository.GetTarea(idTarea);
+    if (tarea == null) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe tarea para modificar el estado");
+      return RedirectToAction("GetTareasByTableroId", new { idTablero, estatusGenericoVM });
+    }
+
+    if (usuarioLogueado == null) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe sesion para identificar actividad de usuario");
+      return RedirectToAction("GetTareasByTableroId", new { idTablero });
+    }
+
+    _tareaRepository.ModificarTarea(idTarea, new Tarea(modificarTareaVM));
     _actividadRepository.AgregarActividad((int) usuarioLogueado, idTablero, idTarea, "Tarea modificada");
-    return RedirectToAction("GetTareasByTableroId", new { idTablero });
+
+    AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.SUCCESS, "Tarea modificada con éxito");
+
+    return RedirectToAction("GetTareasByTableroId", new { idTablero }); 
   }
 
   [HttpPost("{idTablero}/tareas/{idTarea}/modificar/estado")]
   public IActionResult ModificarEstadoTarea(int idTablero, int idTarea, EstadoTarea estado) {
+    EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel();
     int? usuarioLogueado = HttpContext.Session.GetInt32("UsuarioId");
 
+    Tarea tarea = _tareaRepository.GetTarea(idTarea);
+    if (tarea == null) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe tarea para modificar el estado");
+      return RedirectToAction("GetTareasByTableroId", new { idTablero, estatusGenericoVM });
+    }
+
     if (usuarioLogueado == null) {
-      throw new Exception("No existe sesion para identificar actividad de usuario");
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe sesion para identificar actividad de usuario");
+      return RedirectToAction("GetTareasByTableroId", new { idTablero, estatusGenericoVM }); 
     }
 
     _actividadRepository.AgregarActividad((int) usuarioLogueado, idTablero, idTarea, "Cambio de estado a " + estado.ToString());
     _tareaRepository.ModificarEstado(idTarea, estado);
+
     return RedirectToAction("GetTareasByTableroId", new { idTablero });
   }
 
   [HttpGet("{idTablero}/tareas/{idTarea}/eliminar")]
   public IActionResult EliminarTarea(int idTablero, int idTarea) {
     Tarea tarea = _tareaRepository.GetTarea(idTarea);
+    if (tarea == null) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe tarea para eliminar");
+      return RedirectToAction("GetTareasByTableroId", new { idTablero });
+    }
     _tareaRepository.EliminarTarea(idTarea);
+    AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.SUCCESS, "Tarea borrada con éxito");
     return RedirectToAction("GetTareasByTableroId", new { idTablero });
   }
 
@@ -270,8 +348,12 @@ public class TableroController: Controller {
     GetMiembrosByTableroIdViewModel getMiembrosVM = new GetMiembrosByTableroIdViewModel() {
       UsuarioLogueado = (int) usuarioLogueado,
       TableroMembrecias = tableroMembrecias,
-      PuedeAdministrarMiembros = puedeAdministrarMiembros
+      PuedeAdministrarMiembros = puedeAdministrarMiembros,
     };
+
+    if (TempData.Get<EstatsuGenericoViewModel>("Estatus") != null) {
+      getMiembrosVM.Estatus = TempData.Get<EstatsuGenericoViewModel>("Estatus");
+    }
 
     return View(getMiembrosVM);
   }
@@ -284,32 +366,73 @@ public class TableroController: Controller {
 
   [HttpPost("{idTablero}/miembros/agregar")]
   public IActionResult AgregarMiembroATablero(int idTablero, int idUsuario) {
+    Usuario usuario = _usuarioRepository.GetUsuario(idUsuario);
+    if (usuario == null) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe usuario para agregar a tablero");
+      return RedirectToAction("GetMiembrosByTableroId", new { idTablero });
+    }
+
+    if (_usuarioTableroRepository.UsuarioPerteneceATablero(idUsuario, idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.WARNING, "Usuario ya pertenece a este tablero");
+      return RedirectToAction("GetMiembrosByTableroId", new { idTablero });
+    }
+
+    Tablero tablero = _tableroReposiroty.GetTablero(idTablero);
+    if (tablero == null) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe tablero");
+      return RedirectToAction("GetMiembrosByTableroId", new { idTablero });
+    }
+
     _usuarioTableroRepository.AgregarUsuarioATablero(idUsuario, idTablero);
+
+    AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.SUCCESS, "Usuario agregado con éxito");
+
     return RedirectToAction("GetMiembrosByTableroId", new { idTablero });
   }
 
   [HttpPost("{idTablero}/miembros/remover")]
   public IActionResult RemoverMiembroDeTablero(int idTablero, int idUsuario) {
+    if (!_usuarioTableroRepository.UsuarioPerteneceATablero(idUsuario, idTablero)) {
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "Usuario ya pertenece a este tablero");
+      return RedirectToAction("GetMiembrosByTableroId", new { idTablero });
+    }
+
     _usuarioTableroRepository.RemoverUsuarioDeTablero(idUsuario, idTablero);
+
+    AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.SUCCESS, "Usuario removido con éxito");
+
     return RedirectToAction("GetMiembrosByTableroId", new { idTablero });
   }
 
   [HttpPost("{idTablero}/miembros/propietario")]
   public IActionResult OtorgarPropiedadTablero(int idTablero, int idUsuario) {
     Tablero tablero = _tableroReposiroty.GetTablero(idTablero);
-    Usuario nuevoUsuario = _usuarioRepository.GetUsuario(idUsuario);
 
+    Usuario nuevoUsuario = _usuarioRepository.GetUsuario(idUsuario);
     if (nuevoUsuario == null) {
-      throw new Exception("No se pudo otorgar propiedad: usuario inexistente");
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe usuario para otogar propiedad");
+      return RedirectToAction("GetMiembrosByTableroId", new { idTablero });
     }
 
     if (tablero.IdUsuarioPropietario == nuevoUsuario.Id) {
-      throw new Exception("No se pudo otorgar propiedad: usuario ya es propietario");
+      AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.WARNING, "Usuario ya es propietario");
+      return RedirectToAction("GetMiembrosByTableroId", new { idTablero });
     }
 
     tablero.IdUsuarioPropietario = nuevoUsuario.Id;
     _tableroReposiroty.ModificarTablero(idTablero, tablero);
 
+    AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.SUCCESS, "Propiedad otorgada con éxito");
+
     return RedirectToAction("GetMiembrosByTableroId", new { idTablero });
+  }
+
+  // Metodos utiles
+  public void AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD severidad, string mensaje) {
+    EstatsuGenericoViewModel estatusGenericoVM = new EstatsuGenericoViewModel();
+    estatusGenericoVM.TieneEstatus = true;
+    estatusGenericoVM.Severidad = severidad;
+    estatusGenericoVM.EstatusMensaje = mensaje;
+    TempData.Put("Estatus", estatusGenericoVM);
   }
 }

@@ -4,4 +4,5 @@ public interface IUsuarioTableroRepository {
   void AgregarUsuarioATablero(int usuarioId, int tableroId);
   void RemoverUsuarioDeTablero(int usuarioId, int tableroId);
   List<UsuarioTablero> GetMembresias(int usuarioId);
+  bool UsuarioPerteneceATablero(int usuarioId, int tableroId);
 }

@@ -6,4 +6,5 @@ public class GetMiembrosByTableroIdViewModel {
   public int UsuarioLogueado;
   public TableroMembrecias TableroMembrecias = new TableroMembrecias();
   public Boolean PuedeAdministrarMiembros = false;
+  public EstatsuGenericoViewModel Estatus = new EstatsuGenericoViewModel();
 }

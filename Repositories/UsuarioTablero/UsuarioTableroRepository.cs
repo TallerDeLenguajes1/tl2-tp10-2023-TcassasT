@@ -30,6 +30,15 @@ public class UsuarioTableroRepository : IUsuarioTableroRepository {
     return EjecutaQueryReaderUsuarioTablero(query);
   }
 
+  public bool UsuarioPerteneceATablero(int usuarioId, int tableroId) {
+    string query = string.Format(
+      "SELECT * FROM usuarioTablero WHERE usuarioId = {0} AND tableroId = {1};",
+      usuarioId,
+      tableroId
+    );
+    return EjecutaQueryReaderUsuarioTablero(query).Count > 0;
+  }
+
   private List<UsuarioTablero> EjecutaQueryReaderUsuarioTablero(String query) {
     List<UsuarioTablero> membrecias = new List<UsuarioTablero>();
 

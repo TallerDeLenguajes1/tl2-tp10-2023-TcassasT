@@ -2,6 +2,11 @@
 @using tl2_tp10_2023_TcassasT.ViewModels
 @model GetMiembrosByTableroIdViewModel
 
+@if (Model.Estatus != null && Model.Estatus.TieneEstatus) {
+  <div class="@("alert alert-" + ((int) Model.Estatus.Severidad == 0 ? "danger" : (int) Model.Estatus.Severidad == 1 ? "warning" : "success"))" role="alert">
+    <strong>@Model.Estatus.EstatusMensaje</strong>
+  </div>
+}
 <div style="display: flex; justify-content: space-between; align-items: center;">
   <h2>Tablero: @Model.TableroMembrecias.Nombre - miembros</h2>
   <button
