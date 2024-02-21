@@ -131,6 +131,15 @@ public class UsuarioRepository: IUsuarioRepository {
     }
   }
 
+  public bool UsuarioEsAdministrador(int id) {
+    string query = string.Format(
+      "SELECT * FROM usuarios WHERE id = {0} AND rol = {1};",
+      id,
+      (int) RolUsuario.ADMINISTRADOR
+    );
+    return EjecutaQueryReaderUsuarios(query).Count > 0;
+  }
+
   private List<Usuario> EjecutaQueryReaderUsuarios(String query) {
     List<Usuario> usuarios = new List<Usuario>();
 

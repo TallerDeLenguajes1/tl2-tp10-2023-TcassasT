@@ -5,8 +5,21 @@
   ViewData["Title"] = "Home Page";
 }
 
+@if (Model.Estatus != null && Model.Estatus.TieneEstatus) {
+  <div class="@("alert alert-" + ((int) Model.Estatus.Severidad == 0 ? "danger" : (int) Model.Estatus.Severidad == 1 ? "warning" : "success"))" role="alert">
+    <strong>@Model.Estatus.EstatusMensaje</strong>
+  </div>
+}
 <div class="container">
-  <h1 class="display-4 text-center">Bienvenido {TOMÁS}</h1>
+  <h1 class="display-4 text-center">Bienvenido @Model.UsuarioNombre</h1>
+  @if (Model.EsAdministrador) {
+    <div class="my-4" style="display: flex; justify-content: center;">
+      <button type="button" class="btn btn-primary" style="display: flex; align-items: center;">
+        <i class="bi bi-people-fill"></i>
+        <a class="nav-link text-white" asp-area="" asp-controller="Usuario" asp-action="GetUsuarios">Administrar usuarios</a>
+      </button>
+    </div>
+  }
   <div class="row">
     <div class="col">
       <div class="display-6">

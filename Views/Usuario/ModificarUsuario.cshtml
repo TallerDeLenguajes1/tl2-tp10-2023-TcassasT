@@ -1,23 +1,38 @@
 @{
-  ViewData["Title"] = "Modificar usuario: " + @Model.NombreDeUsario;
+  ViewData["Title"] = "Modificar usuario: " + @Model.NombreDeUsuario;
 }
 
 @using tl2_tp10_2023_TcassasT.Models
-@model Usuario
+@using tl2_tp10_2023_TcassasT.ViewModels
+@model ModificarUsuarioViewModel
 
 <form asp-controller="Usuario" asp-action="ModificarUsuario" asp-route-id=@Model.Id method="post">
-  <h2 class="mb-3">Modificar usuario: @Model.NombreDeUsario</h2>
+  @if (Model.TieneError) {
+    <div class="alert alert-danger" role="alert">
+      <strong>Hubo un error al modificar el usuario</strong>
+      @if (Model.ErrorMensaje != "") {
+        <p class="mb-0">Error: @Model.ErrorMensaje</p>
+      }
+    </div>
+  }
+
+  <h2 class="mb-3">Modificar usuario: @Model.NombreDeUsuario</h2>
   <div class="mb-3">
     <label class="form-label">Nombre de usuario</label>
-    <input type="text" class="form-control" asp-for="NombreDeUsario" value=@Model.NombreDeUsario>
+    <input type="text" class="form-control" asp-for="NombreDeUsuario" value=@Model.NombreDeUsuario>
+    <span asp-validation-for="@Model.NombreDeUsuario" class="text-danger"></span>
   </div>
   <div class="mb-3">
     <label class="form-label">Rol</label>
     <select class="form-select" asp-for="Rol">
-      <option>Selecione un rol</option>
-      <option selected=@(Model.Rol == RolUsuario.ADMINISTRADOR) value="0">Administrador</option>
-      <option selected=@(Model.Rol == RolUsuario.OPERADOR) value="1">Operador</option>
+      @foreach (var rol in Enum.GetValues(typeof(RolUsuario))) {
+        <option value="@rol" selected=@Model.Rol.CompareTo(rol).Equals(0)>@rol</option>
+      }
     </select>
+    <span asp-validation-for="@Model.Rol" class="text-danger"></span>
   </div>
+  <input type="number" class="form-control" asp-for="Id" value=@Model.Id hidden>
   <button type="submit" class="btn btn-primary">Crear</button>
 </form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

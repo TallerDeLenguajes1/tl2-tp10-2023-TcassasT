@@ -12,4 +12,5 @@ public interface IUsuarioRepository {
   Usuario? GetUsuario(string nombreDeUsuario);
   void EliminarUsuario(int id);
   Usuario Login(Usuario usuario);
+  bool UsuarioEsAdministrador(int id);
 }

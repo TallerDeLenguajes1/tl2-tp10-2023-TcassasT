@@ -29,4 +29,10 @@ public class Usuario {
     this.nombreDeUsuario = loginViewModel.NombreDeUsuario;
     this.contrasenia = loginViewModel.Contrasenia;
   }
+
+  public Usuario(ModificarUsuarioViewModel modificarUsuarioVM) {
+    this.id = modificarUsuarioVM.Id;
+    this.nombreDeUsuario = modificarUsuarioVM.NombreDeUsuario;
+    this.rol = modificarUsuarioVM.Rol;
+  }
 }

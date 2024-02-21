@@ -8,7 +8,7 @@
 <form asp-controller="Tablero" asp-action="CrearTablero" method="post">
   @if (Model.TieneError) {
     <div class="alert alert-danger" role="alert">
-      <strong>Hubo un error al crear un nuevo usuario</strong>
+      <strong>Hubo un error al crear un nuevo tablero</strong>
       @if (Model.ErrorMensaje != "") {
         <p class="mb-0">Error: @Model.ErrorMensaje</p>
       }

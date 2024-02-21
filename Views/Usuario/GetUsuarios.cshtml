@@ -1,13 +1,19 @@
 @using tl2_tp10_2023_TcassasT.Models
-@model List<Usuario>
+@using tl2_tp10_2023_TcassasT.ViewModels
+@model GetUsuariosViewModel
 
+@if (Model.Estatus != null && Model.Estatus.TieneEstatus) {
+  <div class="@("alert alert-" + ((int) Model.Estatus.Severidad == 0 ? "danger" : (int) Model.Estatus.Severidad == 1 ? "warning" : "success"))" role="alert">
+    <strong>@Model.Estatus.EstatusMensaje</strong>
+  </div>
+}
 <div style="display: flex; justify-content: space-between; align-items: center;">
   <h1>Lista de usuarios</h1>
   <button type="button" class="btn btn-primary">
     <a asp-controller="Usuario" asp-action="CrearUsuario" style="text-decoration: none; color: white;">Crear usuario</a>
   </button>
 </div>
-@if (@Model.Count > 0) {
+@if (Model.Usuarios.Count > 0) {
   <table class="table">
     <thead>
       <tr>
@@ -18,7 +24,7 @@
       </tr>
     </thead>
     <tbody>
-      @foreach(Usuario usuario in Model) {
+      @foreach(Usuario usuario in Model.Usuarios) {
         <tr>
           <th scope="row">@usuario.Id</th>
           <td>@usuario.NombreDeUsario</td>
