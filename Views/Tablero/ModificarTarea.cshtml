@@ -3,13 +3,15 @@
 }
 
 @using tl2_tp10_2023_TcassasT.Models
-@model Tarea
+@using tl2_tp10_2023_TcassasT.ViewModels
+@model ModificarTareaViewModel
 
 <form asp-controller="Tablero" asp-action="ModificarTarea" asp-route-idTablero=@Model.IdTablero asp-route-idTarea=@Model.Id method="post">
   <h2 class="mb-3">Modificar tablero: @Model.Nombre</h2> 
   <div class="mb-3">
     <label class="form-label">Nombre de tarea</label>
     <input type="text" class="form-control" asp-for="Nombre" value=@Model.Nombre>
+    <span asp-validation-for="@Model.Nombre" class="text-danger"></span>
   </div>
   <div class="mb-3">
     <label class="form-label">Descripcion</label>
@@ -26,6 +28,7 @@
         <option value="@estado" selected=@Model.Estado.CompareTo(estado).Equals(0)>@estado</option>
       }
     </select>
+    <span asp-validation-for="@Model.Estado" class="text-danger"></span>
   </div>
   <div class="mb-3" hidden>
     <label class="form-label">Usuario</label>
@@ -37,3 +40,5 @@
   </div>
   <button type="submit" class="btn btn-primary">Modificar</button>
 </form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

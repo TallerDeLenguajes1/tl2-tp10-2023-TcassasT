@@ -6,6 +6,11 @@
 @using tl2_tp10_2023_TcassasT.ViewModels
 @model GetTareasByTableroIdViewModel
 
+@if (Model.Estatus != null && Model.Estatus.TieneEstatus) {
+  <div class="@("alert alert-" + ((int) Model.Estatus.Severidad == 0 ? "danger" : (int) Model.Estatus.Severidad == 1 ? "warning" : "success"))" role="alert">
+    <strong>@Model.Estatus.EstatusMensaje</strong>
+  </div>
+}
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-2">
   <h2 class="mb-3">Tablero: @Model.Tablero.Nombre</h2>
   <div class="d-flex flex-wrap">

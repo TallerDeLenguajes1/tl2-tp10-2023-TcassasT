@@ -232,7 +232,7 @@ public class TableroController: Controller {
 
     ModificarTareaViewModel modificarTareaViewModel = new ModificarTareaViewModel(tareaAModificar);
 
-    return View(tareaAModificar);
+    return View(modificarTareaViewModel);
   }
 
   [HttpPost("{idTablero}/tareas/{idTarea}/modificar")]
@@ -242,13 +242,13 @@ public class TableroController: Controller {
 
     if (!ModelState.IsValid) {
       AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "Valores invalidos por favor reintente");
-      return RedirectToAction("GetTareasByTableroId", new { idTablero });
+      return View(new { idTablero, idTarea, modificarTareaVM });
     }
 
     Tarea tarea = _tareaRepository.GetTarea(idTarea);
     if (tarea == null) {
       AgregarGenericoEstadoATempData(ESTATUS_SEVERIDAD.ERROR, "No existe tarea para modificar el estado");
-      return RedirectToAction("GetTareasByTableroId", new { idTablero, estatusGenericoVM });
+      return RedirectToAction("GetTareasByTableroId", new { idTablero });
     }
 
     if (usuarioLogueado == null) {

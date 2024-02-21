@@ -37,7 +37,7 @@ public class Tarea {
   public Tarea() {}
   public Tarea(CrearTareaViewModel crearTareaVM) {
     this.Nombre = crearTareaVM.Nombre;
-    this.Descripcion = crearTareaVM.Nombre;
+    this.Descripcion = crearTareaVM.Descripcion;
     this.Color = crearTareaVM.Color;
     this.Estado = crearTareaVM.Estado;
     this.IdUsuarioAsignado = crearTareaVM.IdUsuarioAsignado;
@@ -47,7 +47,7 @@ public class Tarea {
   public Tarea(ModificarTareaViewModel modificarTareaVM) {
     this.Id = modificarTareaVM.Id;
     this.Nombre = modificarTareaVM.Nombre;
-    this.Descripcion = modificarTareaVM.Nombre;
+    this.Descripcion = modificarTareaVM.Descripcion;
     this.Color = modificarTareaVM.Color;
     this.Estado = modificarTareaVM.Estado;
     this.IdUsuarioAsignado = modificarTareaVM.IdUsuarioAsignado;
